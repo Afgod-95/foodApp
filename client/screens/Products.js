@@ -40,7 +40,6 @@ const Products = () => {
               <Text>Category</Text>
             </View>
             <View style = {styles.filter}>
-              
               <Text>Filter By: </Text>
             </View>
 

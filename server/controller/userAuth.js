@@ -51,10 +51,12 @@ const registerUser = async (req, res) => {
 
         //checking if email already exist
         const userEmail = await User.findOne({ email })
+        console.log(userEmail)
         if (userEmail) {
             return res.json({
                 error: 'User already exists'
              })
+             
         }
         //no email, then save new user
         const newUser = new User({
