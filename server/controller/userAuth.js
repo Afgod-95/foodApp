@@ -51,7 +51,6 @@ const registerUser = async (req, res) => {
 
         //checking if email already exist
         const userEmail = await User.findOne({ email })
-        console.log(userEmail)
         if (userEmail) {
             return res.json({
                 error: 'User already exists'
@@ -87,7 +86,7 @@ const registerUser = async (req, res) => {
             subject: 'Account Verification', // Subject line
             text: 'Hello,\n\n' +
             'Please verify your account by clicking the link below:\n\n' +
-            'http://localhost:3000/verify/' + newUser.verificationToken + '\n\n' +
+            'https://restaurantapi-bsc7.onrender.com/verify' + newUser.verificationToken + '\n\n' +
             'If you did not make this request, please ignore this email and your password will remain unchanged.\n'
         }
         //sending email to new users

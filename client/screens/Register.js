@@ -15,33 +15,44 @@ const Register = () => {
 
   const handleRegister = async () => {
     const { name, email, password, confirmPassword} = user
-    if (password !== confirmPassword){
-      Alert.alert('Password mismatch')
-    }
+    
     try{
-      await axios.post('https://restaurantapi-bsc7.onrender.com/auth/register', {
+      const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/register', {
         name: name,
         email: email,
-        password: password
-      }).then(res => {
-        if (res.error){
-          console.log(res.error)
-          Alert.alert(res.error)
-        }
-        else{
-          Alert.alert('Registraion successful')
-          setUser({
-            name: '',
-            email: '',
-            password: '',
-            confirmPassword: ''
-          })
-        }
+        password: confirmPassword
       })
+      
+      if (response.data.error) {
+        console.log(response.data.error);
+        Alert.alert(response.data.error);
+      } 
+      else if (password !== confirmPassword){
+        return Alert.alert('Password mismatch')
+      }
+      else {
+        Alert.alert(response.data.message);
+        setUser({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        });
+      }
     }
     catch (error){ 
-      Alert.alert('An error occured whilst registering')
-      console.log(`Error: ${error.message}`)
+      if (error.response) {
+        // The request was made, but the server responded with an error status code
+        console.log(error.response.data);
+        Alert.alert(error.response.data.error);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log('Request made but no response received.');
+      } else {
+        // Something happened in setting up the request
+        console.log('Error:', error.message);
+        Alert.alert('An error occurred while registering');
+      }
     }
   }
 
@@ -89,7 +100,6 @@ const Register = () => {
             <TextInput 
               value= {user.name}
               onChangeText = {(text) => setUser({...user, name: text})}
-              keyboardType='text'
               placeholder='Username'
               secureTextEntry = {false}
             />
@@ -189,6 +199,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   input: {
+    width: 350,
     fontSize: 15,
     color: 'gray',
   },
