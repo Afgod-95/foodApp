@@ -19,24 +19,25 @@ const Register = () => {
       Alert.alert('Password mismatch')
     }
     try{
-      const data = await axios.post('http://192.168.18.123:8000/auth/register', {
+      await axios.post('https://restaurantapi-bsc7.onrender.com/auth/register', {
         name: name,
         email: email,
         password: password
+      }).then(res => {
+        if (res.error){
+          console.log(res.error)
+          Alert.alert(res.error)
+        }
+        else{
+          Alert.alert('Registraion successful')
+          setUser({
+            name: '',
+            email: '',
+            password: '',
+            confirmPassword: ''
+          })
+        }
       })
-      if (data.error){
-        console.log(data.error)
-        Alert.alert(data.error)
-      }
-      else{
-        Alert.alert('Registraion successful')
-        setUser({
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
-        })
-      }
     }
     catch (error){ 
       Alert.alert('An error occured whilst registering')

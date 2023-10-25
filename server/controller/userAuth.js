@@ -32,19 +32,19 @@ const registerUser = async (req, res) => {
 
         //checking credentials of inputs
         if (!name ||!email ||!password) {
-            return res.status(400).json({ 
+            return res.json({ 
                 error: 'Please all credentials are required' 
             })
         }
     
         if (!emailFormat.test(email)) {
-            return res.status(400).json({ 
+            return res.json({ 
                 error: 'Invalid email format'
             })
         }
     
         if(!strongPass.test(password)){
-            return res.status(400).json({ 
+            return res.json({ 
                 error: 'Password must be at least 8 characters long and contain at least one number, one uppercase letter and one lowercase letter'
             })
         }
@@ -52,7 +52,7 @@ const registerUser = async (req, res) => {
         //checking if email already exist
         const userEmail = await User.findOne({ email })
         if (userEmail) {
-            return res.status(400).json({
+            return res.json({
                 error: 'User already exists'
              })
         }
