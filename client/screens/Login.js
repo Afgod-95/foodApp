@@ -33,8 +33,15 @@ const Login = () => {
       }
     }
     catch(error) {
-      console.log(`Error Message: ${error.message}`)
-      Alert.alert(error.message)
+      if (error.response) {
+        console.log(error.response.data);
+        Alert.alert(error.response.data.error);
+      } else if (error.request) {
+        console.log('Request made but no response received.');
+      } else {
+        console.log('Error:', error.message);
+        Alert.alert('An error occurred while registering');
+      }
     }
   }
 
@@ -88,7 +95,7 @@ const Login = () => {
         
           <TextInput 
             value= {user.password}
-            onChangeText = {(text) => setPassword({...user, password: text})}
+            onChangeText = {(text) => setUser({...user, password: text})}
             placeholder='Enter your password'
             Label = "Password"
             secureTextEntry = {true}

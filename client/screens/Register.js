@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Pressable} from 'react-native'
 import axios from 'axios'
-import {  FontAwesome5 } from '@expo/vector-icons';
+import {  FontAwesome5, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Register = () => {
@@ -11,28 +11,27 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
   })
+
+  const [visiblePassword, setVisiblePassword] = useState(false)
 
   const navigate = useNavigation()
 
   const handleRegister = async () => {
-    const { name, email, password, confirmPassword} = user
+    const { name, email, password } = user
     
     try{
       const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/register', {
         name: name,
         email: email,
-        password: confirmPassword
+        password: password
       })
       
       if (response.data.error) {
         Alert.alert(response.data.error);
       } 
-      else if (password !== confirmPassword){
-        return Alert.alert('Password mismatch')
-      }
-      else {
+      
+      else if (response.status === 200) {
         Alert.alert(response.data.message);
         AsyncStorage.setItem('username', name)
         navigate.navigate('Login')
@@ -97,39 +96,47 @@ const Register = () => {
           </View>
 
           <Text style ={styles.smallText}>Sign up with your email address</Text>
-          <View style ={styles.inputBox}>
-            <TextInput 
-              value= {user.name}
-              onChangeText = {(text) => setUser({...user, name: text})}
-              placeholder='Username'
-              secureTextEntry = {false}
-            />
-          </View>
-          <View style ={styles.inputBox}>
-            <TextInput 
-              value= {user.email}
-              onChangeText = {(text) => setUser({...user, email: text})}
-              keyboardType='email-address'
-              placeholder='Enter your email address'
-              secureTextEntry = {false}
-            />
-          </View>
-          <View style = {styles.inputBox}>
-              <TextInput 
-                value= {user.password}
-                onChangeText = {(text) => setUser({...user, password: text})}
-                placeholder='Enter your password'
-                secureTextEntry = {true}
-              />
-          </View>
-          <View style = {styles.inputBox}>
-              <TextInput 
-                value= {user.confirmPassword}
-                onChangeText = {(text) => setUser({...user, confirmPassword: text})}
-                placeholder='Confirm your password'
-                secureTextEntry = {true}
-              />
-          </View>
+          
+          <TextInput 
+            value= {user.name}
+            onChangeText = {(text) => setUser({...user, name: text})}
+            placeholder='Username'
+            secureTextEntry = {false}
+            style = {styles.inputBox}
+          />
+         
+      
+          <TextInput 
+            value= {user.email}
+            onChangeText = {(text) => setUser({...user, email: text})}
+            keyboardType='email-address'
+            placeholder='Enter your email address'
+            secureTextEntry = {false}
+            style = {styles.inputBox}
+          />
+         
+         <View>
+          <TextInput 
+            value= {user.password}
+            onChangeText = {(text) => setUser({...user, password: text})}
+            placeholder='Enter your password'
+            secureTextEntry = {!visiblePassword}
+            style = {styles.inputBox}
+          />
+          <Pressable onPress ={()=>setVisiblePassword(!visiblePassword)}
+            style = {
+              {
+                position: 'absolute', 
+                zIndex: 1, 
+                right: 30, 
+                top: 30
+              }
+            }
+          >
+            <Feather name={visiblePassword ? 'eye' : 'eye-off'} size={24} color="gray"  />
+          </Pressable>
+          
+         </View>
           <TouchableOpacity 
             style={styles.button}
             onPress={handleRegister}>
