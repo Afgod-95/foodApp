@@ -13,6 +13,7 @@ const Login = () => {
   })
   const navigation= useNavigation()
 
+
   const handleLogin = async () => {
     const { email, password } = user
     try{
@@ -26,8 +27,9 @@ const Login = () => {
         console.log(response.data.error)
         Alert.alert(response.data.error)
       }
-      else{
+      else if (response.status === 200){
         console.log(token)
+        console.log('An error occured')
         AsyncStorage.setItem('authToken', token)
         navigate.replace('Main')
       }
@@ -103,8 +105,8 @@ const Login = () => {
           />
           <TouchableOpacity 
             style={styles.button}
-
-            onPress={handleLogin}>
+            onPress={handleLogin}
+          >
             <Text style = {{fontSize: 18, color: '#fff', fontWeight: 'bold'}}>Login</Text>
           </TouchableOpacity>
          

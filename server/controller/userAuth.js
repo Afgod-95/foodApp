@@ -2,6 +2,7 @@ const User = require('../models/users.js')
 const crypto = require('crypto')
 const multer = require('multer')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zA-Z0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/)
 const strongPass = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
@@ -32,19 +33,19 @@ const registerUser = async (req, res) => {
 
         //checking credentials of inputs
         if (!name ||!email ||!password) {
-            return res.json({ 
+            return res.status(400).json({ 
                 error: 'Please all credentials are required' 
             })
         }
     
         if (!emailFormat.test(email)) {
-            return res.json({ 
+            return res.status(400).json({ 
                 error: 'Invalid email format'
             })
         }
     
         if(!strongPass.test(password)){
-            return res.json({ 
+            return res.status(400).json({ 
                 error: 'Password must be at least 8 characters long and contain at least one number, one uppercase letter and one lowercase letter'
             })
         }
@@ -52,7 +53,7 @@ const registerUser = async (req, res) => {
         //checking if email already exist
         const userEmail = await User.findOne({ email })
         if (userEmail) {
-            return res.json({
+            return res.status(400).json({
                 error: 'User already exists'
              })
              
@@ -65,7 +66,7 @@ const registerUser = async (req, res) => {
         })
 
         //generating verification token
-        newUser.verificationToken = crypto.randomBytes(20).toString('hex')
+        newUser.verificationToken = crypto.randomBytes(6).toString('hex').replace(/[a-f]/g, '')
         await newUser.save()
         res.status(200).json({ message: "Registration successful"})
         console.log(newUser)
@@ -86,7 +87,7 @@ const registerUser = async (req, res) => {
             subject: 'Account Verification', // Subject line
             text: 'Hello,\n\n' +
             'Please verify your account by clicking the link below:\n\n' +
-            'https://restaurantapi-bsc7.onrender.com/verify' + newUser.verificationToken + '\n\n' +
+            'https://restaurantapi-bsc7.onrender.com/verify/' + newUser.verificationToken + '\n\n' +
             'If you did not make this request, please ignore this email and your password will remain unchanged.\n'
         }
         //sending email to new users
@@ -132,45 +133,53 @@ const verifyToken = async (req, res) => {
 
 //generate secretkey 
 const generateSecretKey = () => {
-    const secretKey = crypto.randomBytes(20).toString('hex')
+    const secretKey = crypto.randomBytes(6).toString('hex').replace(/[a-f]/g, '')
     return secretKey
 }
 
 const secretKey = generateSecretKey()
 //login 
 const login = async (req, res) => {
-    console.log(req.body)
-    const {email, password} = req.body
-    
-    try{
+    console.log(req.body);
+    const { email, password } = req.body;
 
-        if (!email || !password){
-            res.status(400).json({
+    try {
+        if (!email || !password) {
+            return res.status(400).json({
                 error: "Please provide necessary credentials"
-            })
+            });
         }
 
-        const user = await User.findOne({ email })
-        const existPassword = await User.findOne({ password: bcrypt.compare(password, user.password) })
-        if (!user){
-            res.status(400).json({
+        // Find the user by email
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
                 error: "Invalid email"
-            })
+            });
         }
 
-        if (user.password !== existPassword){
-            res.status(400).json({
+        // Compare the provided password with the hashed password in the user object
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            return res.status(400).json({
                 error: 'Invalid password'
-            })
+            });
         }
-        //generate token
-        const token = ({userId: user._id}, secretKey)
-        res.status(200).json({token}) 
+
+        // Generate a token (ensure you have a valid 'secretKey' variable)
+        const token = jwt.sign({ userId: user._id }, secretKey);
+
+        res.status(200).json({ token });
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        res.status(500).json({
+            error: "An error occurred while processing your request"
+        });
     }
-    catch (error) {
-        console.log(`Error: ${error.message}`)
-    }
-}
+};
+
 
 //exporting user functions 
 module.exports = {
