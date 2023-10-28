@@ -153,7 +153,7 @@ const verifyCode = async (req, res) => {
 };
 
 //SecretKey
-const secretKey = 'your-secret-key';
+const secretKey = process.env.SECRET_KEY;
 
 // Login
 const login = async (req, res) => {
