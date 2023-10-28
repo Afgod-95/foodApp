@@ -3,7 +3,6 @@ import { useNavigation } from '@react-navigation/native'
 import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert} from 'react-native'
 import axios from 'axios'
 import {  FontAwesome5 } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Register = () => {
 
@@ -13,8 +12,6 @@ const Register = () => {
     password: '',
     confirmPassword: ''
   })
-
-  const navigate = useNavigation()
 
   const handleRegister = async () => {
     const { name, email, password, confirmPassword} = user
@@ -27,6 +24,7 @@ const Register = () => {
       })
       
       if (response.data.error) {
+        console.log(response.data.error);
         Alert.alert(response.data.error);
       } 
       else if (password !== confirmPassword){
@@ -34,8 +32,6 @@ const Register = () => {
       }
       else {
         Alert.alert(response.data.message);
-        AsyncStorage.setItem('username', name)
-        navigate.navigate('Login')
         setUser({
           name: '',
           email: '',
@@ -46,11 +42,14 @@ const Register = () => {
     }
     catch (error){ 
       if (error.response) {
+        // The request was made, but the server responded with an error status code
         console.log(error.response.data);
         Alert.alert(error.response.data.error);
       } else if (error.request) {
+        // The request was made but no response was received
         console.log('Request made but no response received.');
       } else {
+        // Something happened in setting up the request
         console.log('Error:', error.message);
         Alert.alert('An error occurred while registering');
       }
@@ -235,4 +234,3 @@ const styles = StyleSheet.create({
 });
 
 export default Register
-
