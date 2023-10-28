@@ -10,7 +10,7 @@ const {
 
 router.post('uploadImage', uploadProfileImage)
 router.post('/auth/register', registerUser)
-router.post('/auth/verifyToken', verifyToken)
+router.get('/auth/verifyToken', verifyToken)
 router.post('/auth/login', login)
 
 
