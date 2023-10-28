@@ -1,144 +1,161 @@
-const User = require('../models/users.js')
-const crypto = require('crypto')
-const multer = require('multer')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const nodemailer = require('nodemailer')
-const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zA-Z0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/)
-const strongPass = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+const User = require('../models/users.js');
+const crypto = require('crypto');
+const multer = require('multer');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
 
-//upload profile image
-const uploadProfileImage = async (req, res) => {
-    try{
-        const user = new User
-        user.proFilePic.push({
-            image: req.file.buffer,
-            contentType: req.file.mimetype
-        })
+// Function to generate a random OTP (6 digits) with an expiration time
+const generateOTP = () => {
+    const length = 6;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expires in 30 minutes
+    return { otp, expirationTime };
+};
 
-        await user.proFilePic.save()
-        res.status(200).json({ message: 'Image uploaded successfully' })
-        
-    }
-    catch (error){
-        res.status(400).json({ error: error.message }) 
-    }
-}
+// Function to send an email with OTP
+const sendVerificationEmail = async (email, otp) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        port: 465,
+        secure: true,
+        auth: {
+            user: 'afgod98@gmail.com',
+            pass: process.env.EMAIL_PASS,
+        },
+    });
 
-//user registration start point 
+    const mailOptions = {
+        from: 'ShopNeest.com',
+        to: email,
+        subject: 'Account Verification',
+        html: `
+            <p>Hello,</p>
+            <p>Your verification code is: <strong style="font-size: 16px;">${otp}</strong></p>
+            <p>OTP expires in 30 minutes</p>
+            <p>If you did not make this request, please ignore this email, and your password will remain unchanged.</p>
+        `,
+    };
+
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(info);
+            }
+        });
+    });
+};
+
+// User registration start point
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password } = req.body
-        console.log(req.body)
+        const { name, email, password } = req.body;
 
-        //checking credentials of inputs
-        if (!name ||!email ||!password) {
-            return res.status(400).json({ 
-                error: 'Please all credentials are required' 
-            })
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                error: 'Please provide all credentials',
+            });
         }
-    
+
         if (!emailFormat.test(email)) {
-            return res.status(400).json({ 
-                error: 'Invalid email format'
-            })
-        }
-    
-        if(!strongPass.test(password)){
-            return res.status(400).json({ 
-                error: 'Password must be at least 8 characters long and contain at least one number, one uppercase letter and one lowercase letter'
-            })
+            return res.status(400).json({
+                error: 'Invalid email format',
+            });
         }
 
-        //checking if email already exist
-        const userEmail = await User.findOne({ email })
+        if (password.length < 8) {
+            return res.status(400).json({
+                error: 'Password must be at least 8 characters',
+            });
+        }
+
+        const userEmail = await User.findOne({ email });
         if (userEmail) {
             return res.status(400).json({
-                error: 'User already exists'
-             })
-             
+                error: 'User already exists',
+            });
         }
-        //no email, then save new user
+
         const newUser = new User({
             name,
             email,
-            password: await bcrypt.hash(password, 12)
-        })
+            password: await bcrypt.hash(password, 12),
+        });
 
-        //generating verification token
-        newUser.verificationToken = crypto.randomBytes(6).toString('hex').replace(/[a-f]/g, '')
-        await newUser.save()
-        res.status(200).json({ message: "Registration successful"})
-        console.log(newUser)
+        const verificationCodeData = generateOTP();
+        newUser.verificationCode = verificationCodeData.otp;
+        newUser.verificationCodeExpiration = verificationCodeData.expirationTime;
 
-        const transporter = nodemailer.createTransport({
-            service:'gmail',
-            port: 465,
-            secure: true, // true for 465, false for other ports
-            auth: {
-                user: 'afgod98@gmail.com', // generated ethereal user
-                pass: process.env.EMAIL_PASS // generated ethereal password
-            }
-        })
-        //mail options 
-        const mailOptions = {
-            from: 'ShopNeest.com', // sender address
-            to: email, // list of receivers
-            subject: 'Account Verification', // Subject line
-            text: 'Hello,\n\n' +
-            'Please verify your account by clicking the link below:\n\n' +
-            'https://restaurantapi-bsc7.onrender.com/verify/' + newUser.verificationToken + '\n\n' +
-            'If you did not make this request, please ignore this email and your password will remain unchanged.\n'
-        }
-        //sending email to new users
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return res.status(400).json({ error: error.message })
-            }
-            res.status(200).json({
-                message: 'Email sent'
-            })
-            console.log('Message sent: %s', info.messageId)
-            console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
-            // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321>
-            // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-        })
-    } 
-    catch (error) {
-        res.status(400).json({ error: error.message })
+        await newUser.save();
+        res.status(200).json({ message: 'Registration successful' });
+
+        const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
+
+        res.status(200).json({
+            message: 'Email sent',
+            emailInfo,
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
 
-//user tokin verification
-const verifyToken = async (req, res) => {
+// Verify user with entered OTP
+const verifyCode = async (req, res) => {
     try {
-        const { token } = req.params
-        const user = await User.findOne({ verificationToken: token })
+        const { email, enteredCode } = req.body;
+
+        if (!email || !enteredCode) {
+            return res.status(400).json({
+                error: 'Please provide email and verification code.',
+            });
+        }
+
+        const user = await User.findOne({ email });
+
         if (!user) {
             return res.status(400).json({
-                error: 'Invalid verification token'
-            })
+                error: 'User not found.',
+            });
         }
-        user.verified = true
-        user.verificationToken =  undefined
-        await user.save()
-        res.status(200).json({
-            message: 'Email verified successfully'
-        })
-    }
-    catch (error) {
-        res.status(400).json({ error: error.message })
-    }
-}
 
-//generate secretkey 
-const generateSecretKey = () => {
-    const secretKey = crypto.randomBytes(6).toString('hex').replace(/[a-f]/g, '')
-    return secretKey
-}
+        if (user.verified) {
+            return res.status(400).json({
+                error: 'User is already verified.',
+            });
+        }
 
-const secretKey = generateSecretKey()
-//login 
+        if (user.verificationCode === enteredCode && user.verificationCodeExpiration > new Date()) {
+            user.verified = true;
+            user.verificationCode = null;
+            user.verificationCodeExpiration = null;
+
+            await user.save();
+
+            res.status(200).json({
+                message: 'Email verified successfully.',
+            });
+        } else {
+            return res.status(400).json({
+                error: 'Invalid verification code or code has expired.',
+            });
+        }
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        res.status(500).json({
+            error: 'An error occurred while processing your request.',
+        });
+    }
+};
+
+//SecretKey
+const secretKey = 'your-secret-key';
+
+// Login
 const login = async (req, res) => {
     console.log(req.body);
     const { email, password } = req.body;
@@ -146,7 +163,7 @@ const login = async (req, res) => {
     try {
         if (!email || !password) {
             return res.status(400).json({
-                error: "Please provide necessary credentials"
+                error: 'Please provide necessary credentials',
             });
         }
 
@@ -155,7 +172,7 @@ const login = async (req, res) => {
 
         if (!user) {
             return res.status(400).json({
-                error: "Invalid email"
+                error: 'Invalid email',
             });
         }
 
@@ -164,27 +181,25 @@ const login = async (req, res) => {
 
         if (!passwordMatch) {
             return res.status(400).json({
-                error: 'Invalid password'
+                error: 'Invalid password',
             });
         }
 
-        // Generate a token (ensure you have a valid 'secretKey' variable)
+        // Generate a token
         const token = jwt.sign({ userId: user._id }, secretKey);
 
         res.status(200).json({ token });
     } catch (error) {
         console.error(`Error: ${error.message}`);
         res.status(500).json({
-            error: "An error occurred while processing your request"
+            error: 'An error occurred while processing your request',
         });
     }
 };
 
-
-//exporting user functions 
+// Export user functions
 module.exports = {
-    uploadProfileImage,
     registerUser,
-    verifyToken,
-    login
-}
+    verifyCode,
+    login,
+};

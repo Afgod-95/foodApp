@@ -1,0 +1,126 @@
+const Products = require('../models/products.js')
+
+//posting products
+const postProducts = async (req, res) => {
+    try {
+        const { name, price, quantity, image, description, category } = req.body;
+
+        if (!name || !price || !quantity || !image || !description || !category) {
+            return res.status(400).json({
+                error: "All fields are required"
+            });
+        }
+
+        const product = await Products.create({
+            name, 
+            price,
+            quantity, 
+            image, 
+            description, 
+            category
+        })
+
+       await product.save()
+       res.status(200).json({
+        message: 'Products saved successfully',
+        product
+       })
+        
+    } catch (error) {
+        console.log(`Error message: ${error.message}`);
+        res.status(500).json({ error: "An error occurred while processing the request" });
+    }
+};
+
+//finding single in the database by id
+const getProductById = async (req, res) => {
+    const { productId } = req.params
+    try{
+        const oneProduct = await Products.findById({_id: productId})
+        if (!oneProduct){
+            res.status(400).json({
+                error: `Failed to get product  with ${productId}`
+            })
+        }
+        else{
+            res.status(200).json({
+                message: `Product with ${productId} found successfully`,
+                oneProduct
+            })
+        }
+    }
+    catch(error){
+        console.log(`Error message: ${error.message}`);
+        res.status(500).json({ error: "An error occurred while processing the request" });
+    }
+}
+
+//deleting a single product
+const deleteSingleProduct = async(req, res) => {
+    const { productId } = req.params
+    try{
+        const oneProduct = await Products.findOneAndDelete({_id: productId})
+        if (!oneProduct){
+            res.status(400).json({
+                error: 'Failed to get product'
+            })
+        }
+        else{
+            res.status(200).json({
+                message: `Product with ${productId} deleted successfully`,
+                oneProduct
+            })
+        }
+    }
+    catch(error){
+        console.log(`Error message: ${error.message}`);
+        res.status(500).json({ error: "An error occurred while processing the request" });
+    }
+}
+
+//updating a single product
+const updateSingleProduct = async(req, res) => {
+    const { productId } = req.params
+    try{
+        const oneProduct = await Products.findOneAndUpdate({_id: productId})
+        if (!oneProduct){
+            res.status(400).json({
+                error: `Failed to update product ${productId}`
+            })
+        }
+        else{
+            res.status(200).json({
+                message: `Product ${productId} updated successfully`,
+                oneProduct
+            })
+        }
+    }
+    catch(error){
+        console.log(`Error message: ${error.message}`);
+        res.status(500).json({ error: "An error occurred while processing the request" });
+    }
+}
+
+//getting all products
+const getAllProduct = async () => {
+    const products = await Products.find({})
+    if (products){
+        res.status(200).json({
+            message: 'All products fetched successfully',
+            products
+        })
+    }
+    else{
+        res.status(400).json({
+            error: 'Failed to get all products'
+        })
+    }
+}
+
+module.exports = {
+    postProducts,
+    getAllProduct,
+    updateSingleProduct,
+    deleteSingleProduct,
+    getProductById
+}

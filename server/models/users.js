@@ -1,6 +1,19 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
+    proFilePic: [
+        {
+          image: {
+            type: Buffer,  // Store image data as a Buffer
+            required: true
+          },
+          contentType: {
+            type: String,  // Store content type, e.g., 'image/jpeg', 'image/png'
+            required: true
+          }
+        }
+    ],
+    
     name: String,
     email: {
         type: String,
@@ -16,19 +29,7 @@ const userSchema = new mongoose.Schema({
         default: false,
     },
 
-    proFilePic: [
-        {
-          image: {
-            type: Buffer,  // Store image data as a Buffer
-            required: true
-          },
-          contentType: {
-            type: String,  // Store content type, e.g., 'image/jpeg', 'image/png'
-            required: true
-          }
-        }
-      ],
-    verificationToken: String,
+    verificationCode: Number,
     addresses: [
         {
             name: String,

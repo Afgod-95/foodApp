@@ -8,31 +8,9 @@ const orderSchema = new mongoose.Schema({
     },
     products: [
         {
-            name: {
-                type: String,
-                required: true
-            },
-            price: {
-                type: String,
-                required: true
-            },
-            quantity: {
-                type: Number,
-                required: true
-            },
-            image: {
-                type: String,
-                required: true
-            },
-            description: {
-                type: String,
-                required: true
-            },
-            category: {
-                type: String,
-                required: true
-            },
-        }
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product', // Reference to the products in the order
+        },
     ],
     totalPrice: {
         type: Number,
