@@ -130,6 +130,13 @@ const verifyToken = async (req, res) => {
     }
 }
 
+//generate secretkey 
+const generateSecretKey = () => {
+    const secretKey = crypto.randomBytes(20).toString('hex')
+    return secretKey
+}
+
+const secretKey = generateSecretKey()
 //login 
 const login = async (req, res) => {
     console.log(req.body)
@@ -143,20 +150,22 @@ const login = async (req, res) => {
             })
         }
 
-        const exist = await User.findOne({ email })
-        const checkPassword = await User.findOne({ password: bcrypt.compare(password, exist.password) })
-        if (!(exist && checkPassword)){
+        const user = await User.findOne({ email })
+        const existPassword = await User.findOne({ password: bcrypt.compare(password, user.password) })
+        if (!user){
             res.status(400).json({
-                error: "Email  and already exist"
+                error: "Invalid email"
             })
         }
 
-        if ((exist && checkPassword)){
-            res.status(200).json({
-                message: "Login successful"
+        if (user.password !== existPassword){
+            res.status(400).json({
+                error: 'Invalid password'
             })
         }
-       exist.verificationToken = true
+        //generate token
+        const token = ({userId: user._id}, secretKey)
+        res.status(200).json({token}) 
     }
     catch (error) {
         console.log(`Error: ${error.message}`)

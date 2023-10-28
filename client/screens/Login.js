@@ -1,22 +1,47 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
 import {  FontAwesome5 } from '@expo/vector-icons';
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
 
-  const [email, setEmail] = useState('')
+  const [user, setUser] = useState({
+    email: '',
+    password: ''
+  })
   const navigation= useNavigation()
-  const [password, setPassword] = useState('')
+
+  const handleLogin = async () => {
+    const { email, password } = user
+    try{
+      const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/login', {
+        email: email,
+        password: password,
+      })
+      const token = response.data.token
+      
+      if(response.data.error){
+        console.log(response.data.error)
+        Alert.alert(response.data.error)
+      }
+      else{
+        console.log(token)
+        AsyncStorage.setItem('authToken', token)
+        navigate.replace('Main')
+      }
+    }
+    catch(error) {
+      console.log(`Error Message: ${error.message}`)
+      Alert.alert(error.message)
+    }
+  }
 
   const handleSignUp = () => {
-    // Navigate to the "register" screen
     navigation.navigate('Register');
   };
-  const handleSubmit = async () => {
-
-      navigation.replace('Main')
-  }
+  
 
   return (
     <SafeAreaView style = {styles.container}>
@@ -50,28 +75,29 @@ const Login = () => {
           </View>
 
           <Text style ={styles.smallText}>Sign in with your email address</Text>
-          <View style ={styles.inputBox}>
-
-              <TextInput 
-                value= {email}
-                onChangeText = {(text) => setEmail(text)}
-                keyboardType='email-address'
-                placeholder='Enter your email address'
-                secureTextEntry = {false}
-              />
-          </View>
-          <View style = {styles.inputBox}>
-            <TextInput 
-              value= {password}
-              onChangeText = {(text) => setPassword(text)}
-              placeholder='Enter your password'
-              secureTextEntry = {true}
-            />
-          </View>
+          
+          <TextInput 
+            value= {user.email}
+            onChangeText = {(text) => setUser({...user, email: text })}
+            keyboardType='email-address'
+            placeholder='Enter your email address'
+            label = "Email"
+            secureTextEntry = {false}
+            style = {styles.inputBox}
+          />
+        
+          <TextInput 
+            value= {user.password}
+            onChangeText = {(text) => setPassword({...user, password: text})}
+            placeholder='Enter your password'
+            Label = "Password"
+            secureTextEntry = {true}
+            style = {styles.inputBox}
+          />
           <TouchableOpacity 
             style={styles.button}
 
-            onPress={handleSubmit}>
+            onPress={handleLogin}>
             <Text style = {{fontSize: 18, color: '#fff', fontWeight: 'bold'}}>Login</Text>
           </TouchableOpacity>
          
@@ -131,9 +157,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputBox: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
     gap: 3,
     margin: 15,
     width: 350,
@@ -141,8 +164,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-  },
-  input: {
     fontSize: 15,
     color: 'gray',
   },
