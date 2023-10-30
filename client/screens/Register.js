@@ -34,7 +34,7 @@ const Register = () => {
       else if (response.status === 200) {
         Alert.alert(response.data.message);
         AsyncStorage.setItem('username', name)
-        navigate.navigate('Login')
+        navigate.navigate('OtpVerification')
         setUser({
           name: '',
           email: '',
@@ -195,22 +195,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   inputBox: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 3,
     margin: 15,
     width: 350,
     height: 50,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 10,
-  },
-  input: {
-    width: 350,
     fontSize: 15,
     color: 'gray',
   },
+  
   lines: {
     width: 100,
     height: 1,

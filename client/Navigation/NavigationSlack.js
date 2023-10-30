@@ -19,7 +19,8 @@ import ItemScreen from '../components/ItemScreen'
 import Query from '../screens/Query'
 import { useSelector } from 'react-redux'
 import EditProfile from '../screens/EditProfile'
-import Avatar from '../components/Avatar'
+
+import OtpVerification from '../screens/OtpVerification'
 
 
 const NavigationSlack = () => {
@@ -200,6 +201,7 @@ const NavigationSlack = () => {
       <Stack.Navigator initialRouteName='Login' >
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
         <Stack.Screen name="Register" component={Register} options={{headerShown: false}}/>
+        <Stack.Screen name = "OtpVerification" component={OtpVerification} options={{headerShown: false}} />
         <Stack.Screen name="Main" component={BottomTabs} options={{headerShown: false}}/>
         <Stack.Screen name="Products" component={Products} options={{headerShown: false}}/>
         <Stack.Screen name="Cart" component={ProductCart} options={{headerShown: false}}/>

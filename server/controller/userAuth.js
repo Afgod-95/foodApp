@@ -33,7 +33,7 @@ const sendVerificationEmail = async (email, otp) => {
         subject: 'Account Verification',
         html: `
             <p>Hello,</p>
-            <p>Your verification code is: <strong style="font-size: 16px;">${otp}</strong></p>
+            <p>Your verification code is: <strong style="font-size: 20px;">${otp}</strong></p>
             <p>OTP expires in 30 minutes</p>
             <p>If you did not make this request, please ignore this email, and your password will remain unchanged.</p>
         `,
@@ -91,7 +91,7 @@ const registerUser = async (req, res) => {
         newUser.verificationCodeExpiration = verificationCodeData.expirationTime;
 
         await newUser.save();
-        res.status(200).json({ message: 'Registration successful' });
+        res.status(200).json({ message: 'An email was sent to you.' });
 
         const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
 
@@ -107,9 +107,9 @@ const registerUser = async (req, res) => {
 // Verify user with entered OTP
 const verifyCode = async (req, res) => {
     try {
-        const { email, enteredCode } = req.body;
+        const { enteredCode } = req.body;
 
-        if (!email || !enteredCode) {
+        if ( !enteredCode) {
             return res.status(400).json({
                 error: 'Please provide email and verification code.',
             });
