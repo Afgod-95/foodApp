@@ -110,7 +110,7 @@ const verifyCode = async (req, res) => {
     try {
         const { enteredCode } = req.body;
 
-        if ( !enteredCode) {
+        if ( !enteredCode !== generateOTP()) {
             return res.status(400).json({
                 error: 'Invalid OTP.',
             });
