@@ -6,83 +6,87 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios'
 
 const OtpVerification = () => {
-    const [otp, setOtp] = useState(['', '', '', '', '', '']);
-    const navigate = useNavigation()
-    const route = useRoute()
-    
-    
-    //function to checkOtpVerification
-    const handleOTPVerification = async () => {
-      const enteredCode = otp
-      console.log(enteredCode)
-      console.log(route.params.email)
-      try{
-        const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/otpVerification', {
-            enteredCode: enteredCode, 
-            email: route.params.email
-        })
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const navigate = useNavigation()
+  const route = useRoute()
+  
+  
+  //function to checkOtpVerification
+  const handleOTPVerification = async () => {
+    const enteredCode = otp.join('')
+    console.log(enteredCode)
+    console.log(route.params.email)
+    try{
+      const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/otpVerification', {
+          enteredCode: enteredCode, 
+          email: route.params.email
+      })
 
-        if(response.data.error){
-            Alert.alert(response.data.error)
-            console.log(response.data.error)
-        }
-
-        else if (response.status === 200){
-          Alert.alert(response.data.message)
-          navigate.navigate('Main')
-        }
+      if(response.data.error){
+          Alert.alert(response.data.error)
+          console.log(response.data.error)
       }
-      catch(error){
-          if (error.response) {
-              console.log(error.response.data);
-              Alert.alert(error.response.data.error);
-            } else if (error.request) {
-              console.log('Request made but no response received.');
-            } else {
-              console.log('Error:', error.message);
-              Alert.alert('An error occurred while registering');
-            }
+
+      else if (response.status === 200){
+        Alert.alert(response.data.message)
+        navigate.navigate('Main')
       }
     }
+    catch(error){
+      console.error('Error while making request:', error);
+
+      if (error.response) {
+        console.error('Server response data:', error.response.data);
+        Alert.alert(error.response.data.error);
+      } else if (error.request) {
+        console.error('Request made but no response received.');
+      } else {
+        console.error('Error:', error.message);
+        Alert.alert('An error occurred while registering');
+      }
+    } 
+  }
 
     
-    //function to handle goBack navition
-    const handleGoBack = () => {
-        navigate.goBack()
-    }
-    const refs = Array(6).fill().map((_, i) => React.createRef());
+  //function to handle goBack navition
+  const handleGoBack = () => {
+      navigate.goBack()
+  }
+  const refs = Array(6).fill().map((_, i) => React.createRef());
 
-    const handleOTPEnter = (text, index) => {
-        if (text === "") {
-          // Handle delete key press
-          const updatedOtp = [...otp];
-          updatedOtp[index] = text;
-          setOtp(updatedOtp);
-      
-          // Move focus to the previous input box if available
-          if (index > 0) {
-            const prevRef = refs[index - 1];
-            if (prevRef && prevRef.current && prevRef.current.focus) {
-              prevRef.current.focus();
-            }
-          }
-        } else {
-          // Handle numeric digit input
-          const updatedOtp = [...otp];
-          updatedOtp[index] = text;
-          setOtp(updatedOtp);
-      
-          // Move focus to the next input box if available
-          if (index < refs.length - 1) {
-            const nextRef = refs[index + 1];
-            if (nextRef && nextRef.current && nextRef.current.focus) {
-              nextRef.current.focus();
-            }
+  const handleOTPEnter = (text, index) => {
+    if (text === "") {
+      // Handle delete key press
+      const updatedOtp = [...otp];
+      updatedOtp[index] = text;
+      setOtp(updatedOtp);
+  
+      // Move focus to the previous input box if available
+      if (index > 0) {
+        const prevRef = refs[index - 1];
+        if (prevRef && prevRef.current && prevRef.current.focus) {
+          prevRef.current.focus();
+        }
+      }
+    } else {
+      // Ensure that the input is a single numeric character
+      if (/^[0-9]$/.test(text)) {
+        const updatedOtp = [...otp];
+        updatedOtp[index] = text;
+        setOtp(updatedOtp);
+  
+        // Move focus to the next input box if available
+        if (index < refs.length - 1) {
+          const nextRef = refs[index + 1];
+          if (nextRef && nextRef.current && nextRef.current.focus) {
+            nextRef.current.focus();
           }
         }
-    };
-      
-      
+      }
+    }
+  };
+  
+
 
   return (
     <SafeAreaView style={styles.container}>

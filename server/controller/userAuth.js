@@ -155,6 +155,7 @@ const verifyCode = async (req, res) => {
 // Login
 const login = async (req, res) => {
     console.log(req.body);
+    const secretKey = process.env.SECRET_KEY
     const { email, password } = req.body;
 
     try {
