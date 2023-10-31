@@ -109,6 +109,9 @@ const registerUser = async (req, res) => {
 const verifyCode = async (req, res) => {
     try {
         const { enteredCode, email } = req.body;
+        console.log('Entered OTP:', enteredCode);
+        console.log('Stored OTP:', user.verificationCode);
+        console.log('OTP Expiration:', user.verificationCodeExpiration);
 
         if (!enteredCode || !email) {
             return res.status(400).json({
@@ -131,9 +134,7 @@ const verifyCode = async (req, res) => {
             user.verificationCodeExpiration = null;
 
             await user.save();
-            console.log('Entered OTP:', enteredCode);
-            console.log('Stored OTP:', user.verificationCode);
-            console.log('OTP Expiration:', user.verificationCodeExpiration);
+           
 
             res.status(200).json({
                 message: 'Email verified successfully.',
