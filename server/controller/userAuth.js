@@ -131,6 +131,9 @@ const verifyCode = async (req, res) => {
             user.verificationCodeExpiration = null;
 
             await user.save();
+            console.log('Entered OTP:', enteredCode);
+            console.log('Stored OTP:', user.verificationCode);
+            console.log('OTP Expiration:', user.verificationCodeExpiration);
 
             res.status(200).json({
                 message: 'Email verified successfully.',
