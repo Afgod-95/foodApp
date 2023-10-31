@@ -108,11 +108,11 @@ const registerUser = async (req, res) => {
 // Verify user with entered OTP
 const verifyCode = async (req, res) => {
     try {
-        const { enteredCode } = req.body;
+        const { enteredCode, email } = req.body;
 
-        if ( !enteredCode !== generateOTP()) {
+        if (!enteredCode || !email) {
             return res.status(400).json({
-                error: 'Invalid OTP.',
+                error: 'Invalid OTP or email.',
             });
         }
 
@@ -124,6 +124,7 @@ const verifyCode = async (req, res) => {
             });
         }
 
+        // Check if the entered OTP matches the stored OTP in the user object
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration > new Date()) {
             user.verified = true;
             user.verificationCode = null;
@@ -146,9 +147,6 @@ const verifyCode = async (req, res) => {
         });
     }
 };
-
-//SecretKey
-const secretKey = process.env.SECRET_KEY;
 
 // Login
 const login = async (req, res) => {
@@ -198,7 +196,6 @@ const login = async (req, res) => {
         });
     }
 };
-
 // Export user functions
 module.exports = {
     registerUser,

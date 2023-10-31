@@ -5,27 +5,29 @@ import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios'
 
-const OtpVerification = () => {
+const OtpVerification = (route) => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const navigate = useNavigation()
+    const email  = route.params
     
     //function to checkOtpVerification
     const handleOTPVerification = async () => {
         const { verificationCode } = otp
         try{
-            const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/otpVerification', {
-                verificationCode
-            })
+          const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/otpVerification', {
+              enteredCode: verificationCode, 
+              email: email
+          })
 
-            if(response.data.error){
-                Alert.alert(response.data.error)
-                console.log(response.data.error)
-            }
+          if(response.data.error){
+              Alert.alert(response.data.error)
+              console.log(response.data.error)
+          }
 
-            else if (response.status === 200){
-                Alert.alert(response.data.message)
-                navigate.navigate('Main')
-            }
+          else if (response.status === 200){
+            Alert.alert(response.data.message)
+            navigate.navigate('Main')
+          }
         }
         catch(error){
             if (error.response) {
