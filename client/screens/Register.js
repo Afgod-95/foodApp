@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Pressable} from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput,  View, Alert, Pressable, } from 'react-native'
 import axios from 'axios'
 import {  FontAwesome5, Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -67,11 +67,12 @@ const Register = () => {
  
 
   return (
-    <SafeAreaView style = {styles.container}>
-      <KeyboardAvoidingView 
-          style={styles.innerContainer} 
-          behavior= {Platform.OS === 'ios' ? 'padding' : 'height'}>
-          
+    <>
+      <SafeAreaView style = {styles.container}>
+        <KeyboardAvoidingView 
+        style={styles.innerContainer} 
+        behavior= {Platform.OS === 'ios' ? 'padding' : 'height'}>
+            
           <Text style ={styles.headerText}>Sign up for free</Text>
           <View style ={styles.displayBox}>
             <Image 
@@ -104,7 +105,7 @@ const Register = () => {
             secureTextEntry = {false}
             style = {styles.inputBox}
           />
-         
+        
       
           <TextInput 
             value= {user.email}
@@ -114,44 +115,46 @@ const Register = () => {
             secureTextEntry = {false}
             style = {styles.inputBox}
           />
-         
-         <View>
-          <TextInput 
-            value= {user.password}
-            onChangeText = {(text) => setUser({...user, password: text})}
-            placeholder='Enter your password'
-            secureTextEntry = {!visiblePassword}
-            style = {styles.inputBox}
-          />
-          <Pressable onPress ={()=>setVisiblePassword(!visiblePassword)}
-            style = {
-              {
-                position: 'absolute', 
-                zIndex: 1, 
-                right: 30, 
-                top: 30
+        
+          <View>
+            <TextInput 
+              value= {user.password}
+              onChangeText = {(text) => setUser({...user, password: text})}
+              placeholder='Enter your password'
+              secureTextEntry = {!visiblePassword}
+              style = {styles.inputBox}
+            />
+            <Pressable onPress ={()=>setVisiblePassword(!visiblePassword)}
+              style = {
+                {
+                  position: 'absolute', 
+                  zIndex: 1, 
+                  right: 30, 
+                  top: 30
+                }
               }
-            }
-          >
-            <Feather name={visiblePassword ? 'eye' : 'eye-off'} size={24} color="gray"  />
-          </Pressable>
-          
-         </View>
-          <TouchableOpacity 
+            >
+              <Feather name={visiblePassword ? 'eye' : 'eye-off'} size={24} color="gray"  />
+            </Pressable>
+            
+          </View>
+          <Pressable 
             style={styles.button}
             onPress={handleRegister}>
             <Text style = {{fontSize: 18, color: '#fff', fontWeight: 'bold'}}>Sign up</Text>
-          </TouchableOpacity>
+          </Pressable>
       
-          <TouchableOpacity 
+          <Pressable 
             onPress = {handleSignIn}
-            style= {{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, margin: 15}}>
+            style= {{ flexDirection: 'row', alignItems: 'center', gap: 5, margin: 15}}>
             <Text style = {{fontSize: 15, color: '#e6dae5'}}>Already have an account?</Text>
-            <Text style = {{fontSize: 18, color: '#fff', }}>Login up here</Text>
-          </TouchableOpacity>
+            <Text style = {{fontSize: 18, color: '#f759f2', }}>Login here</Text>
+          </Pressable>
         </KeyboardAvoidingView>
-    </SafeAreaView>
-    
+      </SafeAreaView>
+
+    </>
+        
   )
 }
 const styles = StyleSheet.create({

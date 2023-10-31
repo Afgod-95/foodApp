@@ -8,7 +8,6 @@ const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-
 
 // Function to generate a random OTP (6 digits) with an expiration time
 const generateOTP = () => {
-    const length = 6;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expires in 30 minutes
@@ -91,7 +90,9 @@ const registerUser = async (req, res) => {
         newUser.verificationCodeExpiration = verificationCodeData.expirationTime;
 
         await newUser.save();
-        res.status(200).json({ message: 'An email was sent to you.' });
+        res.status(200).json({ 
+            message: 'A 6-digit verification code has been sent to your registered email address. Please check your inbox or spam folder for the code.'
+        });
 
         const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
 
@@ -111,17 +112,11 @@ const verifyCode = async (req, res) => {
 
         if ( !enteredCode) {
             return res.status(400).json({
-                error: 'Please provide email and verification code.',
+                error: 'Invalid OTP.',
             });
         }
 
         const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(400).json({
-                error: 'User not found.',
-            });
-        }
 
         if (user.verified) {
             return res.status(400).json({
@@ -183,6 +178,13 @@ const login = async (req, res) => {
             return res.status(400).json({
                 error: 'Invalid password',
             });
+        }
+
+         //check whether user is verified
+         if(user.verified === false){
+            return res.status(400).json({
+                error: 'User not verified'
+            })
         }
 
         // Generate a token

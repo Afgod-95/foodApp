@@ -47,36 +47,35 @@ const OtpVerification = () => {
     }
     const refs = Array(6).fill().map((_, i) => React.createRef());
 
-    // Inside handleOTPEnter function
-if (text === "") {
-    // Handle delete key press
-    const updatedOtp = [...otp];
-    updatedOtp[index] = text;
-    setOtp(updatedOtp);
-  
-    // Move focus to the previous input box if available
-    if (index > 0) {
-      const prevRef = refs[index - 1];
-      if (prevRef && prevRef.current && prevRef.current.focus) {
-        prevRef.current.focus();
-      }
-    }
-  } else {
-    // Handle numeric digit input
-    const updatedOtp = [...otp];
-    updatedOtp[index] = text;
-    setOtp(updatedOtp);
-  
-    // Move focus to the next input box if available
-    if (index < refs.length - 1) {
-      const nextRef = refs[index + 1];
-      if (nextRef && nextRef.current && nextRef.current.focus) {
-        nextRef.current.focus();
-      }
-    }
-  }
-  
-  
+    const handleOTPEnter = (text, index) => {
+        if (text === "") {
+          // Handle delete key press
+          const updatedOtp = [...otp];
+          updatedOtp[index] = text;
+          setOtp(updatedOtp);
+      
+          // Move focus to the previous input box if available
+          if (index > 0) {
+            const prevRef = refs[index - 1];
+            if (prevRef && prevRef.current && prevRef.current.focus) {
+              prevRef.current.focus();
+            }
+          }
+        } else {
+          // Handle numeric digit input
+          const updatedOtp = [...otp];
+          updatedOtp[index] = text;
+          setOtp(updatedOtp);
+      
+          // Move focus to the next input box if available
+          if (index < refs.length - 1) {
+            const nextRef = refs[index + 1];
+            if (nextRef && nextRef.current && nextRef.current.focus) {
+              nextRef.current.focus();
+            }
+          }
+        }
+    };
       
       
 
@@ -86,14 +85,14 @@ if (text === "") {
             <Pressable 
                 onPress={handleGoBack}
                 style = {
-                    {flexDirection: 'row', alignItems: 'center', gap: 8}
+                    {flexDirection: 'row', alignItems: 'center', gap: 8, marginTop : -10}
                 }
             >
                 <AntDesign name="left" size={18} color="#acadac" />
-                <Text style = {{color: '#acadac', fontSize: 20}}>Back</Text>
+                <Text style = {{color: '#acadac', fontSize: 20}}>Sign up</Text>
             </Pressable>
 
-            <Text style = {{color: '#fff', fontWeight: 'bold', fontSize: 30, textAlign: 'center'}}>OTP Verification </Text>
+            <Text style = {{color: '#fff', fontWeight: 'bold', fontSize: 30, textAlign: 'center', marginTop: 20}}>OTP Verification </Text>
             <View style = {{alignItems: 'center', justifyContent: 'center', marginVertical: 15}}>
                 <Image style = {styles.image}
                     source = {{
@@ -106,17 +105,18 @@ if (text === "") {
             <Text style = {{color: '#acadac', fontSize: 18, textAlign: 'center', marginBottom: 15}}>
                 Please enter the 6-digit verification code sent to your email address. 
             </Text>
-            <View style = {styles.inputBoxes}> 
-                <TextInput
-                    key={0}
-                    value={otp[0]}
-                    onChangeText={(text) => handleOTPEnter(text, 0)}
-                    maxLength={1}
-                    keyboardType="numeric"
-                    ref={refs[0]}
-                    autoFocus={true} // Auto-focus on the first input
-                    style={styles.inputBox}
-                />  
+            <View style = {styles.inputBoxes}>
+                {otp.map((digit, index) => (
+                    <TextInput
+                        key={index}
+                        value={digit}
+                        onChangeText={(text) => handleOTPEnter(text, index)}
+                        maxLength={1}
+                        keyboardType="numeric"
+                        ref={refs[index]}
+                        style={styles.inputBox}
+                    />
+                ))}
             </View>
 
             <View style = {{alignItems: 'center', justifyContent: 'center', marginVertical: 15}}>

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
+import { Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Pressable } from 'react-native'
 import {  FontAwesome5 } from '@expo/vector-icons';
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -103,23 +103,23 @@ const Login = () => {
             secureTextEntry = {true}
             style = {styles.inputBox}
           />
-          <TouchableOpacity 
+          <Pressable 
             style={styles.button}
             onPress={handleLogin}
           >
             <Text style = {{fontSize: 18, color: '#fff', fontWeight: 'bold'}}>Login</Text>
-          </TouchableOpacity>
+          </Pressable>
          
-          <View style= {{display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 15}}>
+          <Pressable style= {{ alignItems: 'center', margin: 15}}>
             <Text style = {{fontSize: 18, color: '#fff', textAlign: 'center'}}>Forgot your Password?</Text>
-          </View>
+          </Pressable>
 
-          <TouchableOpacity 
+          <Pressable
             onPress = {handleSignUp}
-            style= {{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5, margin: 15}}>
+            style= {{ flexDirection: 'row', alignItems: 'center', gap: 5, margin: 15}}>
             <Text style = {{fontSize: 15, color: '#e6dae5'}}>Don't have an account?</Text>
-            <Text style = {{fontSize: 18, color: '#fff', }}>Sign up here</Text>
-          </TouchableOpacity>
+            <Text style = {{fontSize: 18, color: '#f759f2', }}>Sign up here</Text>
+          </Pressable>
         </KeyboardAvoidingView>
     </SafeAreaView>
     
