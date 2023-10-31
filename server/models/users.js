@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     },
 
     verificationCode: Number,
+    verificationCodeExpiration: {
+        type: Date
+    },
+   
     addresses: [
         {
             name: String,

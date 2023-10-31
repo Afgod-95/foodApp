@@ -108,10 +108,7 @@ const registerUser = async (req, res) => {
 // Verify user with entered OTP
 const verifyCode = async (req, res) => {
     try {
-        const { enteredCode, email } = req.body;
-        console.log('Entered OTP:', enteredCode);
-        console.log('Stored OTP:', user.verificationCode);
-        console.log('OTP Expiration:', user.verificationCodeExpiration);
+        const { enteredCode, email } = req.body;   
 
         if (!enteredCode || !email) {
             return res.status(400).json({
@@ -120,7 +117,9 @@ const verifyCode = async (req, res) => {
         }
 
         const user = await User.findOne({ email });
-
+        console.log('Entered OTP:', enteredCode);
+        console.log('Stored OTP:', user.verificationCode);
+        console.log('Expirat', user.verificationCodeExpiration)
         if (user.verified) {
             return res.status(400).json({
                 error: 'User is already verified.',
