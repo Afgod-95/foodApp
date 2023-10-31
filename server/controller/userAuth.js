@@ -86,6 +86,8 @@ const registerUser = async (req, res) => {
         });
 
         const verificationCodeData = generateOTP();
+        console.log(verificationCodeData)
+        
         newUser.verificationCode = verificationCodeData.otp;
         newUser.verificationCodeExpiration = verificationCodeData.expirationTime;
 
@@ -133,12 +135,11 @@ const verifyCode = async (req, res) => {
             user.verificationCodeExpiration = null;
 
             await user.save();
-           
-
             res.status(200).json({
                 message: 'Email verified successfully.',
             });
-        } else {
+        } 
+        else {
             return res.status(400).json({
                 error: 'Invalid verification code or code has expired.',
             });

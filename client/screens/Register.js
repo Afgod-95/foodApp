@@ -34,7 +34,7 @@ const Register = () => {
       else if (response.status === 200) {
         Alert.alert(response.data.message);
         AsyncStorage.setItem('username', name)
-        navigate.navigate('OtpVerification', {email: email})
+        navigate.navigate('OtpVerification', { email: email })
         setUser({
           name: '',
           email: '',

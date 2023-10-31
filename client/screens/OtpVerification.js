@@ -2,44 +2,47 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Pressable, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios'
 
-const OtpVerification = (route) => {
+const OtpVerification = () => {
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const navigate = useNavigation()
-    const email  = route.params
+    const route = useRoute()
+    
     
     //function to checkOtpVerification
     const handleOTPVerification = async () => {
-        const { verificationCode } = otp
-        try{
-          const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/otpVerification', {
-              enteredCode: verificationCode, 
-              email: email
-          })
+      const enteredCode = otp
+      console.log(enteredCode)
+      console.log(route.params.email)
+      try{
+        const response = await axios.post('https://restaurantapi-bsc7.onrender.com/auth/otpVerification', {
+            enteredCode: enteredCode, 
+            email: route.params.email
+        })
 
-          if(response.data.error){
-              Alert.alert(response.data.error)
-              console.log(response.data.error)
-          }
+        if(response.data.error){
+            Alert.alert(response.data.error)
+            console.log(response.data.error)
+        }
 
-          else if (response.status === 200){
-            Alert.alert(response.data.message)
-            navigate.navigate('Main')
-          }
+        else if (response.status === 200){
+          Alert.alert(response.data.message)
+          navigate.navigate('Main')
         }
-        catch(error){
-            if (error.response) {
-                console.log(error.response.data);
-                Alert.alert(error.response.data.error);
-              } else if (error.request) {
-                console.log('Request made but no response received.');
-              } else {
-                console.log('Error:', error.message);
-                Alert.alert('An error occurred while registering');
-              }
-        }
+      }
+      catch(error){
+          if (error.response) {
+              console.log(error.response.data);
+              Alert.alert(error.response.data.error);
+            } else if (error.request) {
+              console.log('Request made but no response received.');
+            } else {
+              console.log('Error:', error.message);
+              Alert.alert('An error occurred while registering');
+            }
+      }
     }
 
     
