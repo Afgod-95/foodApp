@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
 
-// Function to generate a random OTP (6 digits) with an expiration time
+// Funcgit tion to generate a random OTP (6 digits) with an expiration time
 const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expirationTime = new Date();
