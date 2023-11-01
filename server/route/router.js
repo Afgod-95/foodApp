@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer')
 
 const roles = {
     user: 'user',
@@ -12,12 +13,16 @@ const checkRole = (requiredRole) => {
         const userRole = req.user.role
     }
 }
+
 const {
     registerUser,
     verifyCode,
-    login
+    login,
+    uploadProfilePic
 } = require('../controller/userAuth.js')
 
+//uploading profile pic
+router.post('/profilePic', uploadProfilePic)
 router.post('/auth/register', registerUser)
 router.post('/auth/otpVerification', verifyCode )
 router.post('/auth/login', login)

@@ -1,10 +1,55 @@
 const User = require('../models/users.js');
-const crypto = require('crypto');
-const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
+
+const multer = require('multer')
+const storage = multer.memoryStorage()
+const upload = multer({storage: storage })
+
+
+//profile pic 
+const uploadProfilePic =  (multer.single('image'), async (req, res) => {
+    try {
+        const file = req.file;
+        if (!file) {
+          return res.status(400).json({
+            error: 'No file uploaded',
+          });
+        }
+        const userId = req.user._id;
+    
+        const user = await User.findById(userId);
+        if (!user) {
+          return res.status(404).json({
+            error: 'User not found',
+          });
+        }
+    
+        // Update the user's profilePic field with the uploaded image data
+        user.proFilePic = [
+          {
+            image: file.buffer,
+            contentType: file.mimetype,
+          },
+        ];
+    
+        await user.save();
+    
+        res.status(200).json({
+          message: 'Profile picture uploaded successfully',
+        });
+    } 
+    catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({
+          error: 'An error occurred while processing your request',
+        });
+    }
+    
+}) 
+
 
 // Funcgit tion to generate a random OTP (6 digits) with an expiration time
 const generateOTP = () => {
@@ -210,4 +255,5 @@ module.exports = {
     registerUser,
     verifyCode,
     login,
+    uploadProfilePic
 };
