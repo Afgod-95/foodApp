@@ -17,14 +17,7 @@ const Home = () => {
   const navigation = useNavigation()
 
   const handleItemPress = (item) => {
-    navigation.navigate('ItemDetails', { 
-      image: item.productImage,
-      product: item.productName,
-      price: item.price,
-      quantity: item.quantity,
-      desc: item.desc,
-      rate: item.rate,
-    });
+    
   };
  
  
@@ -57,7 +50,6 @@ const Home = () => {
             />
           </View>
           <Text style = {styles.purpleText2}>Popular</Text>
-          
           <View>
               <FlatList 
                 showsHorizontalScrollIndicator={false}
@@ -66,14 +58,14 @@ const Home = () => {
                 data = {List}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                  <TouchableOpacity style={{ marginHorizontal: 7 }} onPress={() => handleItemPress(item)}>
+                  <Pressable style={{ marginHorizontal: 7 }} onPress={() => handleItemPress(item)}>
                     <ProductCard
                       image={item.productImage}
                       productName={item.productName}
                       price={item.price}
                       {...item}
                     />
-                  </TouchableOpacity>
+                  </Pressable>
                )}      
               />
           </View>

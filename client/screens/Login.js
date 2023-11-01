@@ -11,7 +11,7 @@ const Login = () => {
     email: '',
     password: ''
   })
-  const navigation= useNavigation()
+  const navigate = useNavigation()
 
 
   const handleLogin = async () => {
@@ -48,7 +48,7 @@ const Login = () => {
   }
 
   const handleSignUp = () => {
-    navigation.navigate('Register');
+    navigate.navigate('Register');
   };
   
 

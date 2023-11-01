@@ -11,8 +11,11 @@ const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expirationTime = new Date();
     expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expires in 30 minutes
+    console.log("Generated OTP:", otp);
+    console.log("Expiration Time:", expirationTime);
     return { otp, expirationTime };
 };
+
 
 // Function to send an email with OTP
 const sendVerificationEmail = async (email, otp) => {

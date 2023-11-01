@@ -1,7 +1,6 @@
 import React, { useState, useRef} from 'react'
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, KeyboardAvoidingView,  ScrollView, Picker} from 'react-native'
 import {  SafeAreaView } from 'react-native-safe-area-context'
-import { LinearGradient } from 'expo-linear-gradient'
 import List from '../data/List';
 import ProductCard from '../components/ProductCard';
 import { useNavigation } from '@react-navigation/native';
@@ -12,16 +11,7 @@ const Products = () => {
 
   const navigate = useNavigation()
 
-  const handleSelectedItem = (item) => {
-    navigate.navigate('ItemDetails', {
-      product: item.productName,
-      image: item.productImage,
-      price: item.price,
-      quantity: item.quantity,
-      desc: item.desc,
-      rate: item.rate,
-    })
-  }
+  
   return (
     <SafeAreaView style = {styles.container}>
       <KeyboardAvoidingView
@@ -62,7 +52,7 @@ const Products = () => {
                 {List.map((item, index) => {
                   return(
                     <TouchableOpacity key = {index}
-                      onPress={() => handleSelectedItem(item)}
+                     
                     >
                       <ProductCard 
                         image = {item.productImage}
