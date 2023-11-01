@@ -9,7 +9,7 @@ const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-
 // Function to generate a random OTP (6 digits) with an expiration time
 const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expirationTime = new Date();
+    const expirationTime = new Date.today();
     expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expires in 30 minutes
     console.log("Generated OTP:", otp);
     console.log("Expiration Time:", expirationTime);
@@ -113,7 +113,8 @@ const registerUser = async (req, res) => {
 // Verify user with entered OTP
 const verifyCode = async (req, res) => {
     try {
-        const { enteredCode, email } = req.body;   
+        const { enteredCode, email } = req.body;
+        console.log(req.body);
 
         if (!enteredCode || !email) {
             return res.status(400).json({
