@@ -11,13 +11,6 @@ const AdminSchema = new mongoose.Schema({
         unique: true,
         required: true,
     },
-
-    products: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Products'
-        }
-    ]
 })
 
 const Admin = mongoose.model('Admin', AdminSchema)
