@@ -3,9 +3,9 @@ const Products = require('../models/products.js')
 //posting products
 const postProducts = async (req, res) => {
     try {
-        const { name, price, quantity, image, description, category } = req.body;
+        const { name, price, rate, quantity, image, description, category } = req.body;
 
-        if (!name || !price || !quantity || !image || !description || !category) {
+        if (!name || !price || !quantity || !image || !description || !category || !rate) {
             return res.status(400).json({
                 error: "All fields are required"
             });
@@ -14,7 +14,8 @@ const postProducts = async (req, res) => {
         const product = await Products.create({
             name, 
             price,
-            quantity, 
+            quantity,
+            rate, 
             image, 
             description, 
             category
