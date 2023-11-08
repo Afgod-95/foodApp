@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/);
 
-const multer = require('multer')
+const multer = require('multer');
+const { generateKey } = require('crypto');
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage })
 
@@ -201,10 +202,82 @@ const login = async (req, res) => {
         });
     }
 };
+
+const ForgotPassword = async ( req, res ) => {
+    const { email } = req.body
+    try{
+        const user = await User.findOne({ email })
+        if (!email) {
+            res.status(400).json({
+                error: 'Please this field is required'
+            })
+        }
+
+        if (!user){
+            return res.status(400).json({
+                error: 'Email not found'
+            })
+        }
+
+        if(user.verified === false){
+            res.status(400).json({
+                error: 'User is not veried'
+            })
+        }
+
+        const verificationCodeData = generateOTP();
+        console.log(verificationCodeData)
+        
+        user.verificationCode = verificationCodeData.otp;
+        user.verificationCodeExpiration = verificationCodeData.expirationTime;
+        
+        res.status(200).json({ 
+            message: 'A 6-digit verification code has been sent to your registered email address. Please check your inbox or spam folder for the code.'
+        });
+    }
+    catch(error){
+        res.status(500).json({error: error})
+        console.log(error.message)
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try{
+        const { newPassword, confirmNewPassword, email } = req.body
+        if (!newPassword || !confirmNewPassword){
+            res.status(400).json({
+                error: 'All fields are required'
+            })
+        } 
+        if(newPassword.length < 6) {
+            res.status(400).josn({
+                error: 'Password should be more than 6 characters long'
+            })
+        }
+        const user = await User.findOneAndReplace({ password })
+        await user.save({
+            email: email,
+            password: bcrypt.hash(confirmNewPassword, 12)
+        })
+        res.status(200).json({
+            message: 'Password resetted succesffuly'
+        })
+
+        console.log(await user.save())
+    }
+    catch(error){
+        res.status(500).json({
+            error: error
+        })
+        console.log(error.message)
+    }
+}
 // Export user functions
 module.exports = {
     registerUser,
     verifyCode,
     login,
-    uploadProfilePic
+    uploadProfilePic,
+    ForgotPassword,
+    resetPassword
 };
