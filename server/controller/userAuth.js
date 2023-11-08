@@ -276,6 +276,12 @@ const ForgotPassword = async ( req, res ) => {
         res.status(200).json({ 
             message: 'A 6-digit verification code has been sent to your registered email address. Please check your inbox or spam folder for the code.'
         });
+        const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
+
+        res.status(200).json({
+            message: 'Email sent',
+            emailInfo,
+        });
     }
     catch(error){
         res.status(500).json({error: error})
