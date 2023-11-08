@@ -103,19 +103,25 @@ const updateSingleProduct = async(req, res) => {
 }
 
 //getting all products
-const getAllProduct = async () => {
-    const products = await Products.find({})
-    if (products){
-        res.status(200).json({
-            message: 'All products fetched successfully',
-            products
-        })
+const getAllProduct = async (req, res) => {
+    try{
+        const products = await Products.find({})
+        if (products){
+            res.status(200).json({
+                message: 'All products fetched successfully',
+                products
+            })
+        }
+        else{
+            res.status(400).json({
+                error: 'Failed to get all products'
+            })
+        }
     }
-    else{
-        res.status(400).json({
-            error: 'Failed to get all products'
-        })
+    catch(error) {
+        console.log(`Error: ${error.message}`)
     }
+    
 }
 
 module.exports = {
