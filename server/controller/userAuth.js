@@ -272,11 +272,13 @@ const ForgotPassword = async ( req, res ) => {
             })
         }
 
-        user.verified = false
+        if(user.verified === true){
+            return user.verified = false
+        }
+        
 
         const verificationCodeData = generateOTP();
         console.log(verificationCodeData)
-        
         user.verificationCode = verificationCodeData.otp;
         user.verificationCodeExpiration = verificationCodeData.expirationTime;
         
