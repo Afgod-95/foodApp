@@ -264,12 +264,9 @@ const ForgotPassword = async ( req, res ) => {
                 error: 'Email not found'
             })
         }
-
-
         const verificationCodeData = generateOTP();
         console.log(verificationCodeData)
         user.verificationCode = verificationCodeData.otp;
-        user.verified = false
         user.verificationCodeExpiration = verificationCodeData.expirationTime;
         
         res.status(200).json({ 
@@ -278,7 +275,7 @@ const ForgotPassword = async ( req, res ) => {
         const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
 
         res.status(200).json({
-            message: 'Email sent',
+            message: 'Email sent', 
             emailInfo,
         });
     }
