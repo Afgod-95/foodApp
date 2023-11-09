@@ -172,13 +172,6 @@ const verifyCode = async (req, res) => {
         console.log('Stored OTP:', user.verificationCode);
         console.log('Expirat', user.verificationCodeExpiration)
         
-        if (user.verified) {
-            return res.status(400).json({
-                error: 'User is already verified.',
-            });
-        }
-
-  
         // Check if the entered OTP matches the stored OTP in the user object
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration > new Date()) {
             user.verified = true;
