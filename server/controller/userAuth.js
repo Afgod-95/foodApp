@@ -171,7 +171,7 @@ const verifyCode = async (req, res) => {
         console.log('Entered OTP:', enteredCode);
         console.log('Stored OTP:', user.verificationCode);
         console.log('Expirat', user.verificationCodeExpiration)
-        
+          
         // Check if the entered OTP matches the stored OTP in the user object
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration > new Date()) {
             user.verified = true;
@@ -183,6 +183,18 @@ const verifyCode = async (req, res) => {
                 message: 'Email verified successfully.',
             });
         } 
+        else if (user.verified === true && user.verificationCode === enteredCode && user.verificationCodeExpiration > new Date()) {
+            user.verified = true;
+            user.verificationCode = null;
+            user.verificationCodeExpiration = null;
+
+            await user.save();
+            res.status(200).json({
+                message: 'Email verified successfully.',
+            });
+        } 
+
+
         else {
             return res.status(400).json({
                 error: 'Invalid verification code or code has expired.',
