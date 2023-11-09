@@ -257,12 +257,14 @@ const login = async (req, res) => {
 const ForgotPassword = async ( req, res ) => {
     const { email } = req.body
     try{
-        const user = await User.findOne({ email })
+        
         if (!email) {
             res.status(400).json({
                 error: 'Please this field is required'
             })
         }
+
+        const user = await User.findOne({ email })
 
         if (!user){
             return res.status(400).json({
@@ -270,11 +272,7 @@ const ForgotPassword = async ( req, res ) => {
             })
         }
 
-        if(user.verified === false){
-            res.status(400).json({
-                error: 'User is not veried'
-            })
-        }
+        user.verified = false
 
         const verificationCodeData = generateOTP();
         console.log(verificationCodeData)
@@ -297,6 +295,8 @@ const ForgotPassword = async ( req, res ) => {
         console.log(error.message)
     }
 }
+
+
 
 const resetPassword = async (req, res) => {
     try{
