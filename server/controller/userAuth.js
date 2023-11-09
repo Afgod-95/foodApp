@@ -273,9 +273,9 @@ const ForgotPassword = async ( req, res ) => {
         }
 
         if(user.verified === true){
-            return user.verified = false
-            
+            return user.verified = false 
         }
+
         console.log(user.verified)
 
         const verificationCodeData = generateOTP();
@@ -309,9 +309,16 @@ const resetPassword = async (req, res) => {
                 error: 'All fields are required'
             })
         } 
+
         if(newPassword.length < 6) {
             res.status(400).josn({
                 error: 'Password should be more than 6 characters long'
+            })
+        }
+
+        if(newPassword !== confirmNewPassword){
+            res.status(400).josn({
+                error: 'Password mismatch'
             })
         }
         const user = await User.findOneAndReplace({ password })
