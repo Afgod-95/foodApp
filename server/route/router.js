@@ -20,8 +20,7 @@ const {
     login,
     ForgotPassword,
     resetPassword,
-    verifyCodeForgotPassword,
-    uploadProfilePic
+    uploadProfilePic,
 } = require('../controller/userAuth.js')
 
 const {
@@ -38,7 +37,6 @@ router.post('/profilePic', uploadProfilePic)
 //user auth
 router.post('/auth/register', registerUser)
 router.post('/auth/otpVerification', verifyCode )
-router.post('/auth/verify-code-forgot-password', verifyCodeForgotPassword)
 router.post('/auth/login', login)
 router.post('/auth/forgot-password', ForgotPassword)
 router.post('/auth/reset-password', resetPassword)
