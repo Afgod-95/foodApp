@@ -20,7 +20,7 @@ const {
     login,
     ForgotPassword,
     resetPassword,
-    otpVerification,
+    OneTimePassword,
     uploadProfilePic,
 } = require('../controller/userAuth.js')
 
@@ -42,6 +42,7 @@ router.post('/auth/login', login)
 
 //forgot password
 router.post('/auth/forgot-password', ForgotPassword)
+router.post('/auth/password-reset-request',OneTimePassword)
 router.post('/auth/reset-password', resetPassword)
 
 //products api
