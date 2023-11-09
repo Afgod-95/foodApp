@@ -304,9 +304,6 @@ const OneTimePassword = async (req, res) => {
         
         // Check if the entered OTP matches the stored OTP in the user object
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration > new Date()) {
-            user.verificationCode = null;
-            user.verificationCodeExpiration = null;
-
             await user.save();
             res.status(200).json({
                 message: 'Password reset request successful.',
