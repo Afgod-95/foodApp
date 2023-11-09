@@ -20,35 +20,41 @@ const generateOTP = () => {
 
 // Function to send an email with OTP
 const sendVerificationEmail = async (email, otp) => {
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        port: 465,
-        secure: true,
-        auth: {
-            user: 'afgod98@gmail.com',
-            pass: process.env.EMAIL_PASS,
-        },
-    });
-    const mailOptions = {
-        from: 'ShopNeest.com',
-        to: email,
-        subject: 'Account Verification',
-        html: `
-            <p>Hello,</p>
-            <p>Your verification code is: <strong style="font-size: 20px;">${otp}</strong></p>
-            <p>OTP expires in 30 minutes</p>
-            <p>If you did not make this request, please ignore this email, and your password will remain unchanged.</p>
-        `,
-    };
-    return new Promise((resolve, reject) => {
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                reject(error);
-            } else {
-                resolve(info);
-            }
+    try{
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'afgod98@gmail.com',
+                pass: process.env.EMAIL_PASS,
+            },
         });
-    });
+        const mailOptions = {
+            from: 'ShopNeest.com',
+            to: email,
+            subject: 'Account Verification',
+            html: `
+                <p>Hello,</p>
+                <p>Your verification code is: <strong style="font-size: 20px;">${otp}</strong></p>
+                <p>OTP expires in 30 minutes</p>
+                <p>If you did not make this request, please ignore this email, and your password will remain unchanged.</p>
+            `,
+        };
+        return new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(info);
+                }
+            });
+        });
+    }
+    catch (error){
+        console.log(error.message)
+    }
+   
 };
 
 
