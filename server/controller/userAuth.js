@@ -274,8 +274,9 @@ const ForgotPassword = async ( req, res ) => {
 
         if(user.verified === true){
             return user.verified = false
+            
         }
-        
+        console.log(user.verified)
 
         const verificationCodeData = generateOTP();
         console.log(verificationCodeData)
@@ -336,7 +337,6 @@ module.exports = {
     registerUser,
     verifyCode,
     login,
-    verifyCodeForgotPassword,
     uploadProfilePic,
     ForgotPassword,
     resetPassword

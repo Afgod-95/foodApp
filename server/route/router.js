@@ -41,7 +41,6 @@ router.post('/auth/otpVerification', verifyCode )
 router.post('/auth/login', login)
 
 //forgot password
-router.post('/auth/verify-code', otpVerification )
 router.post('/auth/forgot-password', ForgotPassword)
 router.post('/auth/reset-password', resetPassword)
 
