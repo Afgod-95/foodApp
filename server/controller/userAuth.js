@@ -20,9 +20,8 @@ const generateOTP = () => {
 
 
 //otp token generation
-const generateUniqueToken = async () => {
-    const user = new User()
-    const token = jwt.sign({ userId: user._id }, secretKey);
+const generateUniqueToken = (userId) => {
+    const token = jwt.sign({ userId }, secretKey);
     return token
 }
 // Function to send an email with OTP
@@ -252,7 +251,7 @@ const login = async (req, res) => {
         }
 
         // Generate a token
-        const token = generateUniqueToken()
+        const token = generateUniqueToken(user._id)
 
         res.status(200).json({ token });
     } catch (error) {
