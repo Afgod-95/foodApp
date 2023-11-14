@@ -18,6 +18,12 @@ const generateOTP = () => {
 };
 
 
+//otp token generation
+const generateUniqueToken = () => {
+    const user = new User
+    const token = jwt.sign({ userId: user._id }, secretKey);
+    return token
+}
 // Function to send an email with OTP
 const sendVerificationEmail = async (email, otp) => {
     try{
@@ -30,6 +36,9 @@ const sendVerificationEmail = async (email, otp) => {
                 pass: process.env.EMAIL_PASS,
             },
         });
+        const verificationToken = generateUniqueToken();
+        const verificationLink = `https://restaurantapi-bsc7.onrender.com/verify?token=${verificationToken}`;
+
         const mailOptions = {
             from: 'ShopNeest.com',
             to: email,
@@ -37,6 +46,7 @@ const sendVerificationEmail = async (email, otp) => {
             html: `
                 <p>Hello,</p>
                 <p>Your verification code is: <strong style="font-size: 20px;">${otp}</strong></p>
+                <p>Verification link: <a href="${verificationLink}">${verificationLink}</a></p>
                 <p>OTP expires in 30 minutes</p>
                 <p>If you did not make this request, please ignore this email, and your password will remain unchanged.</p>
             `,
@@ -242,7 +252,7 @@ const login = async (req, res) => {
         }
 
         // Generate a token
-        const token = jwt.sign({ userId: user._id }, secretKey);
+        const token = generateToken()
 
         res.status(200).json({ token });
     } catch (error) {
@@ -338,22 +348,21 @@ const resetPassword = async (req, res) => {
             })
         } 
 
-        if(newPassword.length < 6) {
-            res.status(400).josn({
+        if (newPassword.length < 6) {
+            res.status(400).json({
                 error: 'Password should be more than 6 characters long'
-            })
+            });
         }
-
-        if(newPassword !== confirmNewPassword){
-            res.status(400).josn({
+        
+        if (newPassword !== confirmNewPassword) {
+            res.status(400).json({
                 error: 'Password mismatch'
-            })
+            });
         }
-        const user = await User.findOneAndReplace({ password })
-        await user.save({
-            email: email,
-            password: bcrypt.hash(confirmNewPassword, 12)
-        })
+        
+        const user = await User.findOne({ email });
+        user.password = await bcrypt.hash(confirmNewPassword, 12);
+        await user.save();
         res.status(200).json({
             message: 'Password resetted succesffuly'
         })
