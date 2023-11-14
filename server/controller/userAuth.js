@@ -7,6 +7,7 @@ const emailFormat = new RegExp(/^[a-zA-Z0-9_.+]*[a-zA-Z][a-zAZ0-9_.+]*@[a-zA-Z0-
 const multer = require('multer');
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage })
+const secretKey = process.env.SECRET_KEY
 
 const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -19,8 +20,8 @@ const generateOTP = () => {
 
 
 //otp token generation
-const generateUniqueToken = () => {
-    const user = new User
+const generateUniqueToken = async () => {
+    const user = new User()
     const token = jwt.sign({ userId: user._id }, secretKey);
     return token
 }
@@ -216,7 +217,6 @@ const verifyCode = async (req, res) => {
 // Login
 const login = async (req, res) => {
     console.log(req.body);
-    const secretKey = process.env.SECRET_KEY
     const { email, password } = req.body;
 
     try {
@@ -252,7 +252,7 @@ const login = async (req, res) => {
         }
 
         // Generate a token
-        const token = generateToken()
+        const token = generateUniqueToken()
 
         res.status(200).json({ token });
     } catch (error) {
