@@ -341,7 +341,7 @@ const OneTimePassword = async (req, res) => {
 const resetPassword = async (req, res) => {
     try{
         const { newPassword, confirmNewPassword, email } = req.body
-        if (!newPassword || !confirmNewPassword){
+        if (!newPassword || !confirmNewPassword || !email){
             res.status(400).json({
                 error: 'All fields are required'
             })
