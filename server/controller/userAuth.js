@@ -165,6 +165,7 @@ const registerUser = async (req, res) => {
     }
 };
 
+// Verify Code
 const verifyCode = async (req, res) => {
     try {
         const { enteredCode, email } = req.body;
@@ -189,12 +190,24 @@ const verifyCode = async (req, res) => {
             user.verificationCode = null;
             user.verificationCodeExpiration = null;
 
+            // Save changes to the user
             await user.save();
+
+            // Generate a token
+            const token = generateUniqueToken(user._id);
+
+            // Return the token in the response
             return res.status(200).json({
                 message: 'Email verified successfully.',
+                token,
             });
-        } 
-    } catch (error) {
+        } else {
+            return res.status(400).json({
+                error: 'Invalid OTP or email.',
+            });
+        }
+    } 
+    catch (error) {
         console.error(`Error: ${error.message}`);
         return res.status(500).json({
             error: 'An error occurred while processing your request.',
