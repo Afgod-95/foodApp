@@ -201,11 +201,7 @@ const verifyCode = async (req, res) => {
                 message: 'Email verified successfully.',
                 token,
             });
-        } else {
-            return res.status(400).json({
-                error: 'Invalid OTP or email.',
-            });
-        }
+        } 
     } 
     catch (error) {
         console.error(`Error: ${error.message}`);
