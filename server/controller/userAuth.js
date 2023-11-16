@@ -315,11 +315,6 @@ const OneTimePassword = async (req, res) => {
             });
         } 
 
-        else {
-            return res.status(400).json({
-                error: 'Invalid verification code or code has expired.',
-            });
-        }
     } catch (error) {
         console.error(`Error: ${error.message}`);
         res.status(500).json({
