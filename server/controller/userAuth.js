@@ -193,11 +193,7 @@ const verifyCode = async (req, res) => {
             return res.status(200).json({
                 message: 'Email verified successfully.',
             });
-        } else {
-            return res.status(400).json({
-                error: 'Invalid verification code or code has expired.',
-            });
-        }
+        } 
     } catch (error) {
         console.error(`Error: ${error.message}`);
         return res.status(500).json({
