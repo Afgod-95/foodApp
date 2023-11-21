@@ -335,11 +335,14 @@ const OneTimePassword = async (req, res) => {
                 message: 'OTP verification successful.',
             });
         } 
+        
         else {
             res.status(400).json({
                 error: 'Invalid OTP or OTP has expired.',
             });
         }
+        const token = generateUniqueToken(user._id)
+        res.status(200).json({ token });
     } catch (error) {
         console.error(`Error: ${error.message}`);
         res.status(500).json({
