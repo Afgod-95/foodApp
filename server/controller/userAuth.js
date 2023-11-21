@@ -202,6 +202,11 @@ const verifyCode = async (req, res) => {
                 token,
             });
         } 
+        else {
+            return res.status(400).json({
+                error: 'Invalid OTP or email.',
+            });
+        }
     } 
     catch (error) {
         console.error(`Error: ${error.message}`);
@@ -287,11 +292,19 @@ const ForgotPassword = async ( req, res ) => {
             message: 'A 6-digit verification code has been sent to your registered email address. Please check your inbox or spam folder for the code.'
         });
         const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
-
-        res.status(200).json({
-            message: 'Email sent', 
-            emailInfo,
-        });
+        
+        if(emailInfo){
+            res.status(200).json({
+                message: 'Email sent', 
+                emailInfo,
+            });
+        }
+        
+        else {
+            res.status(400).json({
+                error: 'An error occured'
+            })
+        }
     }
     catch(error){
         res.status(500).json({error: error})
