@@ -323,6 +323,9 @@ const OneTimePassword = async (req, res) => {
             });
         }
         const user = await User.findOne({ email });
+        console.log('Entered Code:', enteredCode);
+        console.log('Email:', email);
+
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
             user.verificationCode = null;
             user.verificationCodeExpiration = null;
@@ -331,7 +334,8 @@ const OneTimePassword = async (req, res) => {
             res.status(200).json({
                 message: 'OTP verification successful.',
             });
-        } else {
+        } 
+        else {
             res.status(400).json({
                 error: 'Invalid OTP or OTP has expired.',
             });
