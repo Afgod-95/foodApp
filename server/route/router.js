@@ -43,7 +43,6 @@ router.post('/auth/login', login)
 
 //forgot password
 router.post('/auth/forgot-password', ForgotPassword)
-router.post('/auth/reset-password-request-verify', sendResetPasswordEmail )
 router.post('/auth/password-reset-request',OneTimePassword)
 router.post('/auth/reset-password', resetPassword)
 

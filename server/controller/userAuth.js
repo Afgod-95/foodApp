@@ -366,6 +366,7 @@ const OneTimePassword = async (req, res) => {
                 error: 'Invalid OTP or email.',
             });
         }
+
         const user = await User.findOne({ email });
         console.log('Entered Code:', enteredCode);
         console.log('Email:', email);
@@ -374,26 +375,29 @@ const OneTimePassword = async (req, res) => {
             user.verificationCode = null;
             user.verificationCodeExpiration = null;
             await user.save();
-            res.status(200).json({
+
+            // Generate a token
+            const token = generateUniqueToken(user._id);
+
+            // Send a response with the token
+            return res.status(200).json({
                 message: 'OTP verification successful.',
+                token,
             });
-        } 
-        
-        else {
-            res.status(400).json({
+        } else {
+            // If OTP is invalid or has expired, send an error response
+            return res.status(400).json({
                 error: 'Invalid OTP or OTP has expired.',
             });
         }
-        const token = generateUniqueToken(user._id)
-        res.status(200).json({ token });
     } catch (error) {
         console.error(`Error: ${error.message}`);
-        res.status(500).json({
+        // If an error occurs, send an error response
+        return res.status(500).json({
             error: 'An error occurred while processing your request.',
         });
     }
 };
-
 const resetPassword = async (req, res) => {
     try{
         const { newPassword, confirmNewPassword, email } = req.body
