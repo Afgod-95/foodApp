@@ -267,52 +267,6 @@ const login = async (req, res) => {
     }
 };
 
-const ForgotPassword = async ( req, res ) => {
-    const { email } = req.body
-    try{
-        
-        if (!email) {
-            res.status(400).json({
-                error: 'Please this field is required'
-            })
-        }
-
-        const user = await User.findOne({ email })
-
-        if (!user){
-            return res.status(400).json({
-                error: 'Email not found'
-            })
-        }
-        const verificationCodeData = generateOTP();
-        console.log(verificationCodeData)
-        user.verificationCode = verificationCodeData.otp;
-        user.verificationCodeExpiration = verificationCodeData.expirationTime;
-        
-        res.status(200).json({ 
-            message: 'A 6-digit verification code has been sent to your registered email address. Please check your inbox or spam folder for the code.'
-        });
-        const emailInfo = await sendVerificationEmail(email, verificationCodeData.otp);
-        
-        if(emailInfo){
-            res.status(200).json({
-                message: 'Email sent', 
-                emailInfo,
-            });
-        }
-        
-        else {
-            res.status(400).json({
-                error: 'An error occured'
-            })
-        }
-    }
-    catch(error){
-        res.status(500).json({error: error})
-        console.log(error.message)
-    }
-}
-
 //reset password email 
 const sendResetPasswordEmail = async (email, otp) => {
     try{
@@ -354,6 +308,54 @@ const sendResetPasswordEmail = async (email, otp) => {
         console.log(error)
     }
 }
+
+
+const ForgotPassword = async ( req, res ) => {
+    const { email } = req.body
+    try{
+        
+        if (!email) {
+            res.status(400).json({
+                error: 'Please this field is required'
+            })
+        }
+
+        const user = await User.findOne({ email })
+
+        if (!user){
+            return res.status(400).json({
+                error: 'Email not found'
+            })
+        }
+        const verificationCodeData = generateOTP();
+        console.log(verificationCodeData)
+        user.verificationCode = verificationCodeData.otp;
+        user.verificationCodeExpiration = verificationCodeData.expirationTime;
+        
+        res.status(200).json({ 
+            message: 'A 6-digit verification code has been sent to your registered email address. Please check your inbox or spam folder for the code.'
+        });
+        const emailInfo = await sendResetPasswordEmail(email, verificationCodeData.otp);
+        
+        if(emailInfo){
+            res.status(200).json({
+                message: 'Email sent', 
+                emailInfo,
+            });
+        }
+        
+        else {
+            res.status(400).json({
+                error: 'An error occured'
+            })
+        }
+    }
+    catch(error){
+        res.status(500).json({error: error})
+        console.log(error.message)
+    }
+}
+
 
 const OneTimePassword = async (req, res) => {
     try {
