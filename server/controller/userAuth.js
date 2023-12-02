@@ -68,6 +68,7 @@ const sendVerificationEmail = async (email, otp) => {
 };
 
 
+
 //profile pic 
 const uploadProfilePic = upload.single('image', async (req, res) => {
     try {
@@ -312,6 +313,47 @@ const ForgotPassword = async ( req, res ) => {
     }
 }
 
+//reset password email 
+const sendResetPasswordEmail = async (email, otp) => {
+    try{
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            port: 465,
+            secure: true,
+            auth: {
+                user: 'afgod98@gmail.com',
+                pass: process.env.EMAIL_PASS,
+            },
+        })
+        const verificationToken = generateUniqueToken();
+        const verificationLink = `https://restaurantapi-bsc7.onrender.com/verify?token=${verificationToken}`;
+
+        const mailOptions = {
+            from: 'ShopNeest.com',
+            to: email,
+            subject: 'Account Verification',
+            html: `
+                <p>Hello,</p>
+                <p>Your reset password verification code is: <strong style="font-size: 20px;">${otp}</strong></p>
+                <p>Verification link: <a href="${verificationLink}">${verificationLink}</a></p>
+                <p>OTP expires in 30 minutes</p>
+                <p>If you did not make this request, please ignore this email, and your password will remain unchanged.</p>
+            `,
+        };
+        return new Promise((resolve, reject) => {
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(info);
+                }
+            });
+        });
+    }
+    catch(error) {
+        console.log(error)
+    }
+}
 
 const OneTimePassword = async (req, res) => {
     try {
@@ -330,7 +372,6 @@ const OneTimePassword = async (req, res) => {
             user.verificationCode = null;
             user.verificationCodeExpiration = null;
             await user.save();
-
             res.status(200).json({
                 message: 'OTP verification successful.',
             });
@@ -350,7 +391,6 @@ const OneTimePassword = async (req, res) => {
         });
     }
 };
-
 
 const resetPassword = async (req, res) => {
     try{
@@ -397,5 +437,6 @@ module.exports = {
     uploadProfilePic,
     ForgotPassword,
     OneTimePassword,
+    sendResetPasswordEmail,
     resetPassword
 };
