@@ -372,6 +372,7 @@ const OneTimePassword = async (req, res) => {
         console.log('Email:', email);
 
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
+            user.verified = true
             user.verificationCode = null;
             user.verificationCodeExpiration = null;
             await user.save();
