@@ -59,55 +59,61 @@ router.put('/api/products/id', updateSingleProduct)
 router.delete('/api/products/id', deleteSingleProduct)
 
 
+const CLIENT_ID = 'foodapp-403604';
+const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
 
-// Configure passport and Google OAuth strategy
+// Callback URL where Google redirects after user authorization
+const CALLBACK_URL = 'http://localhost:3000/auth/google/callback';
+
+// Configure Passport with Google strategy
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: 'https://restaurantapi-bsc7.onrender.com/auth/google/callback',
-  userProfileURL: 'https://www.googleapis.com/oauth2/v3/userinfo',
-  passReqToCallback: true,
-}));
+  clientID: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
+  callbackURL: CALLBACK_URL,
+  scope: ['profile', 'email'],
+}, (accessToken, refreshToken, profile, done) => {
+  // Check if user already exists
+  User.findOne({ googleId: profile.id }, (err, user) => {
+    if (err) { return done(err); }
 
-// Define route for Google login
-router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+    if (user) {
+      // User already exists, log them in
+      return done(null, user);
+    } else {
+      // New user, create and log them in
+      const newUser = new User({
+        googleId: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+      });
 
-// Callback route after Google authentication
-router.get('/auth/google/callback', passport.authenticate('google', {
-  successRedirect: '/Main',
-  failureRedirect: '/sign-up',
-}));
-
-// Route to handle user information after login
-router.get('/', (req, res) => {
-  if (!req.user) {
-    return res.redirect('/login');
-  }
-  const { displayName, email } = req.user.profile;
-  res.send(`Welcome, ${displayName}! Your email is ${email}`);
-});
-
-// Signup logic (example using MongoDB)
-
-
-
-router.post('/signup', async (req, res) => {
-    const { name, email, googleId } = req.body;
-    try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        // Already signed up
-        return res.status(400).send({ message: 'User already exists' });
-      }
-  
-      const newUser = await User.create({ name, email, googleId });
-      // Send success response or redirect to login
-      res.status(200).send({ message: 'User successfully signed up' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send({ message: 'Error signing up user' });
+      newUser.save((err, savedUser) => {
+        if (err) { return done(err); }
+        return done(null, savedUser);
+      });
     }
   });
+}));
+
+// Define routes for login and signup with Google
+
+router.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/auth/google/callback', passport.authenticate('google', {
+  successRedirect: '/profile', // Redirect to profile page on success
+  failureRedirect: '/login', // Redirect to login page on failure
+}));
+
+// Generate JWT token for authenticated user
+router.get('/profile', (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).send('Unauthorized');
+  }
+
+  const token = jwt.sign({ id: req.user.id }, 'YOUR_JWT_SECRET', { expiresIn: '1h' });
+  res.send({ token });
+});
+
   
 
 module.exports = router

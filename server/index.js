@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const dotEnv = require('dotenv').config()
 const morgan = require('morgan')
+const passport = require('passport')
 
 const app = express()
 const PORT = 8000
@@ -16,6 +17,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 app.use(morgan('tiny'))
+app.use(passport.initialize());
 
 //routes
 app.use(router)

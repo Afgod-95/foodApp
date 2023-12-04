@@ -170,6 +170,7 @@ const registerUser = async (req, res) => {
 const verifyCode = async (req, res) => {
     try {
         const { enteredCode, email } = req.body;
+        console.log(enteredCode, email)
 
         if (!enteredCode || !email) {
             return res.status(400).json({
@@ -356,86 +357,6 @@ const ForgotPassword = async ( req, res ) => {
     }
 }
 
-
-const OneTimePassword = async (req, res) => {
-    try {
-        const { enteredCode, email } = req.body;
-
-        if (!enteredCode || !email) {
-            return res.status(400).json({
-                error: 'Invalid OTP or email.',
-            });
-        }
-
-        const user = await User.findOne({ email });
-        console.log('Entered Code:', enteredCode);
-        console.log('Email:', email);
-
-        if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
-            user.verified = true
-            user.verificationCode = null;
-            user.verificationCodeExpiration = null;
-            await user.save();
-
-            // Generate a token
-            const token = generateUniqueToken(user._id);
-
-            // Send a response with the token
-            return res.status(200).json({
-                message: 'OTP verification successful.',
-                token,
-            });
-        } else {
-            // If OTP is invalid or has expired, send an error response
-            return res.status(400).json({
-                error: 'Invalid OTP or OTP has expired.',
-            });
-        }
-    } catch (error) {
-        console.error(`Error: ${error.message}`);
-        // If an error occurs, send an error response
-        return res.status(500).json({
-            error: 'An error occurred while processing your request.',
-        });
-    }
-};
-const resetPassword = async (req, res) => {
-    try{
-        const { newPassword, confirmNewPassword, email } = req.body
-        if (!newPassword || !confirmNewPassword || !email){
-            res.status(400).json({
-                error: 'All fields are required'
-            })
-        } 
-
-        if (newPassword.length < 6) {
-            res.status(400).json({
-                error: 'Password should be more than 6 characters long'
-            });
-        }
-        
-        if (newPassword !== confirmNewPassword) {
-            res.status(400).json({
-                error: 'Password mismatch'
-            });
-        }
-        
-        const user = await User.findOne({ email });
-        user.password = await bcrypt.hash(confirmNewPassword, 12);
-        await user.save();
-        res.status(200).json({
-            message: 'Password resetted succesffuly'
-        })
-
-        console.log(await user.save())
-    }
-    catch(error){
-        res.status(500).json({
-            error: error
-        })
-        console.log(error.message)
-    }
-}
 // Export user functions
 module.exports = {
     registerUser,
