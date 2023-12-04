@@ -364,7 +364,5 @@ module.exports = {
     login,
     uploadProfilePic,
     ForgotPassword,
-    OneTimePassword,
     sendResetPasswordEmail,
-    resetPassword
 };
