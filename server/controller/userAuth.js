@@ -11,12 +11,19 @@ const secretKey = process.env.SECRET_KEY
 
 const generateOTP = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expirationTime = new Date();
-    expirationTime.setMinutes(expirationTime.getMinutes() + 30); // Expires in 30 minutes
+    const expirationTime = new Date().getTime() + 1800000;
     console.log("Generated OTP:", otp);
     console.log("Expiration Time:", expirationTime);
     return { otp, expirationTime };
 };
+
+
+const generateResetOTP = () => {
+    const otp = Math.floor(Math.random() * 900000) + 100000;
+    const expirationTime = new Date().getTime() + 1800000; // 30 minutes in milliseconds
+    return { otp, expirationTime };
+  };
+  
 
 
 //otp token generation
@@ -200,7 +207,7 @@ const verifyCode = async (req, res) => {
 
             // Return the token in the response
             return res.status(200).json({
-                message: 'Email verified successfully.',
+                message: 'OTP verification successful.',
                 token,
             });
         } 
@@ -328,7 +335,7 @@ const ForgotPassword = async ( req, res ) => {
                 error: 'Email not found'
             })
         }
-        const verificationCodeData = generateOTP();
+        const verificationCodeData = generateResetOTP();
         console.log(verificationCodeData)
         user.verificationCode = verificationCodeData.otp;
         user.verificationCodeExpiration = verificationCodeData.expirationTime;
@@ -357,6 +364,50 @@ const ForgotPassword = async ( req, res ) => {
     }
 }
 
+const verifyResetOTP = async (req, res) => {
+    try {
+      const { enteredCode, email } = req.body;
+  
+      if (!enteredCode || !email) {
+        return res.status(400).json({
+          error: 'Invalid OTP or email.',
+        });
+      }
+  
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return res.status(404).json({
+          error: 'User not found',
+        });
+      }
+  
+      // Check if the entered OTP matches the stored OTP in the user object
+      if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
+        // Verification successful
+        user.verified = true;
+        user.verificationCode = null;
+        user.verificationCodeExpiration = null;
+  
+        await user.save();
+  
+        res.status(200).json({
+          message: 'OTP verification successful.',
+        });
+      } else {
+        // Invalid OTP
+        res.status(400).json({
+          error: 'Invalid OTP or email.',
+        });
+      }
+    } catch (error) {
+      console.error(`Error: ${error.message}`);
+      res.status(500).json({
+        error: 'An error occurred while processing your request.',
+      });
+    }
+  };
+
 // Export user functions
 module.exports = {
     registerUser,
@@ -365,4 +416,5 @@ module.exports = {
     uploadProfilePic,
     ForgotPassword,
     sendResetPasswordEmail,
+    verifyResetOTP
 };
