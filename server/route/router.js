@@ -34,7 +34,9 @@ const {
     updateSingleProduct,
     deleteSingleProduct,
     getProductById
-} = require('../controller/products.js')
+} = require('../controller/products.js');
+
+const { userOrder, orderHistory } = require('../controller/order.js');
 
 //uploading profile pic
 router.post('/profilePic', uploadProfilePic)
@@ -55,6 +57,10 @@ router.get('/api/products/id', getProductById)
 router.post('/api/postproducts', postProducts)
 router.put('/api/products/id', updateSingleProduct)
 router.delete('/api/products/id', deleteSingleProduct)
+
+//order
+router.get('/api/orders', orderHistory)
+router.post('/api/userOrders', userOrder)
 
 
 const CLIENT_ID = 'foodapp-403604';
