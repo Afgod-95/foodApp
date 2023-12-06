@@ -12,11 +12,11 @@ const userOrder = async (req, res) => {
     
     // Correct the instantiation of the Order object
     const newOrder = new Order({
-      userId,
-      productId,
-      totalPrice,
-      deliveryAddress,
-      paymentMethod,
+      userId: userId,
+      productId: productId,
+      totalPrice: totalPrice,
+      deliveryAddress: deliveryAddress,
+      paymentMethod: paymentMethod,
     });
 
     
