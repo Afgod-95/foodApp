@@ -10,6 +10,14 @@ const FoodMenuSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: Strring,
+      required: true
+    },
+    rate: {
+      type: String,
+      required: true
+    }
   },
   {
     timestamps: true,

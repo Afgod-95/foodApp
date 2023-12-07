@@ -19,8 +19,6 @@ const userOrder = async (req, res) => {
       paymentMethod: paymentMethod,
     });
 
-    
-
     // Save the order before sending the response
     await newOrder.save();
 

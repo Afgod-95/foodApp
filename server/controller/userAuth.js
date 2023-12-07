@@ -257,12 +257,18 @@ const login = async (req, res) => {
         }
 
          //check whether user is verified
-         if(user.verified === false){
+        if(user.verified === false){
             return res.status(400).json({
                 error: 'User not verified'
             })
         }
 
+        //checking whether user exist 
+        if(!user){
+            return res.status(400).json({
+                message: 'Email not found'
+            })
+        }
         // Generate a token
         const token = generateUniqueToken(user._id)
 
@@ -274,6 +280,20 @@ const login = async (req, res) => {
         });
     }
 };
+
+//get user by id
+const getUserID = async (req, res) => {
+    try{
+      const { id } = req.body
+      const userId = await User.findById({_id: id})
+      return res.status(200).json({
+        message: 'User Id retrieved successfully', userId
+      })
+    }
+    catch(error){
+      console.log(error.message)
+    }
+}
 
 //reset password email 
 const sendResetPasswordEmail = async (email, otp) => {
@@ -413,6 +433,7 @@ module.exports = {
     registerUser,
     verifyCode,
     login,
+    getUserID,
     uploadProfilePic,
     ForgotPassword,
     sendResetPasswordEmail,
