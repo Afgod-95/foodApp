@@ -11,7 +11,7 @@ const FoodMenuSchema = new mongoose.Schema(
       required: true,
     },
     description: {
-      type: Strring,
+      type: String,
       required: true
     },
     rate: {
