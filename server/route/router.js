@@ -59,7 +59,7 @@ router.get('/products/api/', getAllProduct )
 router.get('/products/api/:id', getProductById)
 router.post('/api/postproducts', postProducts)
 router.put('/products/api/:id', updateSingleProduct)
-router.delete('products/api/:id', deleteSingleProduct)
+router.delete('/products/api/:id', deleteSingleProduct)
 
 //order
 router.get('orders/api/', orderHistory)
