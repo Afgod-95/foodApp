@@ -55,15 +55,15 @@ router.post('/auth/forgot-password', ForgotPassword)
 
 
 //products api
-router.get('/api/products', getAllProduct )
-router.get('/api/products/:id', getProductById)
+router.get('products/api/', getAllProduct )
+router.get('/products/api/:id', getProductById)
 router.post('/api/postproducts', postProducts)
-router.put('/api/products/:id', updateSingleProduct)
-router.delete('/api/products/:id', deleteSingleProduct)
+router.put('/products/api/:id', updateSingleProduct)
+router.delete('products/api/:id', deleteSingleProduct)
 
 //order
-router.get('/api/orders', orderHistory)
-router.post('/api/userOrders', userOrder)
+router.get('orders/api/', orderHistory)
+router.post('userOrders/api/', userOrder)
 
 
 //food menu 
