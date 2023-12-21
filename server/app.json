@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "server",
+    "slug": "server",
+    "version": "1.0.0",
+    "description": "",
+    "sdkVersion": "49.0.0",
+    "platforms": []
+  }
+}

@@ -48,7 +48,7 @@ router.post('/auth/register', registerUser)
 router.post('/auth/otpVerification', verifyCode )
 router.post('/auth/reset-password-otp-verification', verifyResetOTP)
 router.post('/auth/login', login)
-router.get('/auth/get-user-by/id', getUserID)
+router.get('/auth/get-user-by/:id', getUserID)
 
 //forgot password
 router.post('/auth/forgot-password', ForgotPassword)
@@ -56,10 +56,10 @@ router.post('/auth/forgot-password', ForgotPassword)
 
 //products api
 router.get('/api/products', getAllProduct )
-router.get('/api/products/id', getProductById)
+router.get('/api/products/:id', getProductById)
 router.post('/api/postproducts', postProducts)
-router.put('/api/products/id', updateSingleProduct)
-router.delete('/api/products/id', deleteSingleProduct)
+router.put('/api/products/:id', updateSingleProduct)
+router.delete('/api/products/:id', deleteSingleProduct)
 
 //order
 router.get('/api/orders', orderHistory)
