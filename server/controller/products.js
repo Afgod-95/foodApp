@@ -37,7 +37,7 @@ const postProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     const { productId } = req.params;
     try {
-        const oneProduct = await Products.findById(productId);
+        const oneProduct = await Products.findOne({ _id: productId });
         if (!oneProduct) {
             res.status(404).json({
                 error: `Product with ID ${productId} not found`,
