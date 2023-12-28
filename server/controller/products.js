@@ -1,4 +1,6 @@
+const { default: mongoose } = require('mongoose');
 const Products = require('../models/products.js')
+const objectId = mongoose.Types.ObjectId
 
 //posting products
 const postProducts = async (req, res) => {
@@ -37,7 +39,7 @@ const postProducts = async (req, res) => {
 const getProductById = async (req, res) => {
     const { id } = req.params;
     try {
-        const oneProduct = await Products.findOne({ _id: id });
+        const oneProduct = await Products.findOne({ _id: objectId(id) });
 
         if (!oneProduct) {
             return res.status(404).json({
