@@ -35,18 +35,18 @@ const postProducts = async (req, res) => {
 
 //finding single in the database by id
 const getProductById = async (req, res) => {
-    const { productId } = req.params;
+    const { id } = req.params;
     try {
-        const oneProduct = await Products.findOne({ _id: productId });
+        const oneProduct = await Products.findOne({ _id: id });
 
         if (!oneProduct) {
             return res.status(404).json({
-                message: `Product with ID ${productId} not found`,
+                message: `Product with ID ${id} not found`,
             });
         }
 
         return res.status(200).json({
-            message: `Product with ID ${productId} found successfully`,
+            message: `Product with ID ${id} found successfully`,
             data: oneProduct,
         });
     } 
