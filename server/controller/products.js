@@ -38,20 +38,23 @@ const getProductById = async (req, res) => {
     const { productId } = req.params;
     try {
         const oneProduct = await Products.findOne({ _id: productId });
+
         if (!oneProduct) {
-            res.status(404).json({
-                error: `Product with ID ${productId} not found`,
-            });
-        } else {
-            res.status(200).json({
-                message: `Product with ID ${productId} found successfully`,
-                oneProduct,
+            return res.status(404).json({
+                message: `Product with ID ${productId} not found`,
             });
         }
-    } catch (error) {
-        console.log(`Error message: ${error.message}`);
-        res.status(500).json({
-            error: "An error occurred while processing the request",
+
+        return res.status(200).json({
+            message: `Product with ID ${productId} found successfully`,
+            data: oneProduct,
+        });
+    } 
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "An error occurred while processing the request",
+            errorMessage: error.message,
         });
     }
 };
