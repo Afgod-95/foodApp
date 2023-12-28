@@ -284,7 +284,7 @@ const login = async (req, res) => {
 const getUserID = async (req, res) => {
     try {
       const { id } = req.params; // Use req.params to get the user ID from the URL
-      const userId = await User.findById(id); // Use findById directly with the provided user ID
+      const userId = await User.findById({_id: id}); // Use findById directly with the provided user ID
       if (!userId) {
         return res.status(404).json({
           message: 'User not found',

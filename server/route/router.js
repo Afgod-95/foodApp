@@ -62,8 +62,8 @@ router.put('/products/api/:id', updateSingleProduct)
 router.delete('/products/api/:id', deleteSingleProduct)
 
 //order
-router.get('orders/api/', orderHistory)
-router.post('userOrders/api/', userOrder)
+router.get('/orders/api/', orderHistory)
+router.post('/userOrders/api/', userOrder)
 
 
 //food menu 
