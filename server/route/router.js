@@ -57,7 +57,7 @@ router.post('/auth/forgot-password', ForgotPassword)
 //products api
 router.get('/products/api/', getAllProduct )
 router.get('/products/api/:id', getProductById)
-router.post('/api/postproducts', postProducts)
+router.post('/products/api/post-products', postProducts)
 router.put('/products/api/:id', updateSingleProduct)
 router.delete('/products/api/:id', deleteSingleProduct)
 
