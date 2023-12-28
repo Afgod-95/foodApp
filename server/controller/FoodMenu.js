@@ -50,7 +50,7 @@ const restaurantMenu = {
         try {
             const { id } = req.body
 
-            const deletedMenu = await FoodMenu.findByIdAndDelete(id)
+            const deletedMenu = await FoodMenu.findByIdAndDelete({ _id: id})
 
             if (deletedMenu) {
                 return res.status(200).json({
@@ -72,7 +72,7 @@ const restaurantMenu = {
     updateFoodMenuById: async (req, res) => {
         try {
             const { id, name, image, description, rate } = req.body
-            const updatedMenu = await FoodMenu.findByIdAndUpdate(id, {
+            const updatedMenu = await FoodMenu.findByIdAndUpdate( { _id: id }, {
                 name: name,
                 image: image,
                 description: description,
