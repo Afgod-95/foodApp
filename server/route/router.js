@@ -27,6 +27,7 @@ const {
     uploadProfilePic,
     verifyResetOTP,
     getUserID,
+    resetPassword,
 } = require('../controller/userAuth.js')
 
 const {
@@ -46,12 +47,13 @@ router.post('/profilePic', uploadProfilePic)
 //user auth
 router.post('/auth/register', registerUser)
 router.post('/auth/otpVerification', verifyCode )
-router.post('/auth/reset-password-otp-verification', verifyResetOTP)
 router.post('/auth/login', login)
 router.get('/auth/get-user-by/:id', getUserID)
 
 //forgot password
 router.post('/auth/forgot-password', ForgotPassword)
+router.post('/auth/reset-password-otp-verification', verifyResetOTP)
+router.post('/auth/reset-password', resetPassword)
 
 
 //products api
@@ -73,8 +75,8 @@ router.post('/userOrders/api/', userOrder)
 //updating food menu by id
 router.post('/api/food-menu', restaurantMenu.postMenu)
 router.get('/api/get-all-food-menu', restaurantMenu.getAllFoodMenu)
-router.delete('/api/delete-menu/id', restaurantMenu.deleteFoodMenuById)
-router.patch('/api/food-menu/id', restaurantMenu.updateFoodMenuById)
+router.delete('/api/delete-menu/:id', restaurantMenu.deleteFoodMenuById)
+router.patch('/api/food-menu/:id', restaurantMenu.updateFoodMenuById)
 
 const CLIENT_ID = 'foodapp-403604';
 const CLIENT_SECRET = 'YOUR_CLIENT_SECRET';

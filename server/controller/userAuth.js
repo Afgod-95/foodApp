@@ -436,6 +436,50 @@ const verifyResetOTP = async (req, res) => {
     }
   };
 
+  //reset password 
+  const resetPassword = async (req, res) => {
+    try{
+        const { newPassword, confirmNewPassword } = req.body
+        if ( !newPassword || ! confirmNewPassword ){
+            res.status(400).json({
+                error: 'All fields are required'
+            })
+        }
+
+        if (newPassword.length < 8 ){
+            res.status(400).json({
+                error: 'Password should be more than 8 characters long'
+            })
+        }
+
+        if (newPassword !== confirmNewPassword){
+            res.status(400).json({
+                error: 'Password mismatch'
+            })
+        }
+
+        const user = await User.findOneAndUpdate(
+            { $set: { password: confirmNewPassword } },
+            { new: true } 
+        );
+
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found',
+            });
+        }
+        return res.status(200).json({
+            message: 'Password updated and saved successfully',
+        })
+    }
+    catch (error){
+        res.status(500).json({
+            error: error.message,
+            errorMessage: 'An an error occured whilst processing your request'
+        })
+    }
+  }
+
 // Export user functions
 module.exports = {
     registerUser,
@@ -445,5 +489,6 @@ module.exports = {
     uploadProfilePic,
     ForgotPassword,
     sendResetPasswordEmail,
-    verifyResetOTP
+    verifyResetOTP,
+    resetPassword
 };
