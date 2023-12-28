@@ -356,7 +356,7 @@ const ForgotPassword = async ( req, res ) => {
             })
         }
 
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ email: email })
 
         if (!user){
             return res.status(400).json({
@@ -402,7 +402,7 @@ const verifyResetOTP = async (req, res) => {
         });
       }
   
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email: email });
   
       if (!user) {
         return res.status(404).json({
