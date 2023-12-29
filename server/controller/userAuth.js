@@ -394,47 +394,45 @@ const ForgotPassword = async ( req, res ) => {
 
 const verifyResetOTP = async (req, res) => {
     try {
-      const { enteredCode, email } = req.body;
+        const { enteredCode, email } = req.body;
 
-      if (!enteredCode || !email) {
-        return res.status(400).json({
-          error: 'Invalid OTP or email.',
-        });
-      }
+        if (!enteredCode || !email) {
+            return res.status(400).json({
+            error: 'Invalid OTP or email.',
+            });
+        }
 
-      const user = await User.findOne({ email: email });
+        const user = await User.findOne({ email: email });
 
-      if (!user) {
-        return res.status(404).json({
-          error: 'User not found',
-        });
-      }
+        if (!user) {
+            return res.status(404).json({
+            error: 'User not found',
+            });
+        }
 
-      console.log('Entered Code:', enteredCode);
-      console.log('Stored Code:', user.verificationCode);
-      console.log('Expiration Time:', user.verificationCodeExpiration);
+        console.log('Entered Code:', enteredCode);
+        console.log('Stored Code:', user.verificationCode);
+        console.log('Expiration Time:', user.verificationCodeExpiration);
 
-      if (user) {
-        const generatedOTP = generateOTP(); 
-        const expirationTime = new Date();
-        expirationTime.setMinutes(expirationTime.getMinutes() + 15); 
-    
-        user.verificationCode = generatedOTP;
-        user.verificationCodeExpiration = expirationTime;
-    
-        await user.save();
-    
-        res.status(400).json({
-            message: 'Otp verification successful.',
-        });
-    }
-    else {
+        if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
+            // Verification successful
+            user.verified = true;
+            user.verificationCode = null;
+            user.verificationCodeExpiration = null;
+
+            await user.save();
+
+            return res.status(200).json({
+            message: 'OTP verification successful.',
+            });
+        } 
         // Invalid OTP
         res.status(400).json({
-          error: 'Invalid OTP or email.',
+            error: 'Hello.',
         });
-      }
-    } catch (error) {
+      
+    } 
+    catch (error) {
       console.error(`Error: ${error.message}`);
       res.status(500).json({
         error: 'An error occurred while processing your request.',
