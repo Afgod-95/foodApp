@@ -459,7 +459,7 @@ const verifyResetOTP = async (req, res) => {
         }
 
         const user = await User.findOneAndUpdate(
-            { $set: { password: bcrypt.hash(confirmNewPassword, 12) } },
+            { $setField: { password: bcrypt.hash(confirmNewPassword, 12) } },
             { new: true } 
         );
 
