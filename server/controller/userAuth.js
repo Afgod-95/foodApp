@@ -395,30 +395,33 @@ const ForgotPassword = async ( req, res ) => {
 const verifyResetOTP = async (req, res) => {
     try {
       const { enteredCode, email } = req.body;
-  
+
       if (!enteredCode || !email) {
         return res.status(400).json({
           error: 'Invalid OTP or email.',
         });
       }
-  
+
       const user = await User.findOne({ email: email });
-  
+
       if (!user) {
         return res.status(404).json({
           error: 'User not found',
         });
       }
-  
-      // Check if the entered OTP matches the stored OTP in the user object
+
+      console.log('Entered Code:', enteredCode);
+      console.log('Stored Code:', user.verificationCode);
+      console.log('Expiration Time:', user.verificationCodeExpiration);
+
       if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
         // Verification successful
         user.verified = true;
         user.verificationCode = null;
         user.verificationCodeExpiration = null;
-  
+
         await user.save();
-  
+
         res.status(200).json({
           message: 'OTP verification successful.',
         });
@@ -434,7 +437,8 @@ const verifyResetOTP = async (req, res) => {
         error: 'An error occurred while processing your request.',
       });
     }
-  };
+};
+
 
   //reset password 
   const resetPassword = async (req, res) => {
