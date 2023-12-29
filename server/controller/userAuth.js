@@ -463,7 +463,7 @@ const verifyResetOTP = async (req, res) => {
         const user = await User.findOneAndUpdate(
             { email: email },
             { $set: { password: hashedPassword } },
-            { new: true }
+            { new: true, useFindAndModify: false }
         );
         if (!user) {
             return res.status(404).json({
