@@ -414,18 +414,21 @@ const verifyResetOTP = async (req, res) => {
       console.log('Stored Code:', user.verificationCode);
       console.log('Expiration Time:', user.verificationCodeExpiration);
 
-      if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
-        // Verification successful
-        user.verified = true;
-        user.verificationCode = null;
-        user.verificationCodeExpiration = null;
-
+      if (user) {
+        const generatedOTP = generateOTP(); 
+        const expirationTime = new Date();
+        expirationTime.setMinutes(expirationTime.getMinutes() + 15); 
+    
+        user.verificationCode = generatedOTP;
+        user.verificationCodeExpiration = expirationTime;
+    
         await user.save();
-
-        res.status(200).json({
-          message: 'OTP verification successful.',
+    
+        res.status(400).json({
+            message: 'Otp verification successful.',
         });
-      } else {
+    }
+    else {
         // Invalid OTP
         res.status(400).json({
           error: 'Invalid OTP or email.',
