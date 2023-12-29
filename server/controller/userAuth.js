@@ -398,7 +398,7 @@ const verifyResetOTP = async (req, res) => {
 
         if (!enteredCode || !email) {
             return res.status(400).json({
-            error: 'Invalid OTP or email.',
+                error: 'Invalid OTP or email.',
             });
         }
 
@@ -406,7 +406,7 @@ const verifyResetOTP = async (req, res) => {
 
         if (!user) {
             return res.status(404).json({
-            error: 'User not found',
+                error: 'User not found',
             });
         }
 
@@ -415,27 +415,33 @@ const verifyResetOTP = async (req, res) => {
         console.log('Expiration Time:', user.verificationCodeExpiration);
 
         if (user.verificationCode === enteredCode) {
-            const expirationTime = new Date();
-            expirationTime.setMinutes(expirationTime.getMinutes() + 15); // Assuming a 15-minute expiration time
-            user.verificationCodeExpiration = expirationTime;
+            const currentTime = new Date().getTime();
             
-            await user.save();
+            if (user.verificationCodeExpiration && currentTime < user.verificationCodeExpiration.getTime()) {
+                // Verification successful
+                user.verificationCodeExpiration = null; // Reset expiration to prevent reuse
+                await user.save();
 
-            return res.status(200).json({
-            message: 'OTP verification successful.',
+                return res.status(200).json({
+                    message: 'OTP verification successful.',
+                });
+            } else {
+                // Verification code expired
+                return res.status(400).json({
+                    error: 'Verification code has expired.',
+                });
+            }
+        } else {
+            // Invalid OTP
+            return res.status(400).json({
+                error: 'Invalid OTP or email.',
             });
-        } 
-        // Invalid OTP
-        res.status(400).json({
-            error: 'Hello.',
+        }
+    } catch (error) {
+        console.error(`Error: ${error.message}`);
+        res.status(500).json({
+            error: 'An error occurred while processing your request.',
         });
-      
-    } 
-    catch (error) {
-      console.error(`Error: ${error.message}`);
-      res.status(500).json({
-        error: 'An error occurred while processing your request.',
-      });
     }
 };
 
