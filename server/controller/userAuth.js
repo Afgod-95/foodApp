@@ -458,11 +458,13 @@ const verifyResetOTP = async (req, res) => {
             })
         }
 
-        const user = await User.findOneAndUpdate(
-            { $setField: { password: bcrypt.hash(confirmNewPassword, 12) } },
-            { new: true } 
-        );
+        const hashedPassword = await bcrypt.hash(confirmNewPassword, 12);
 
+        const user = await User.findOneAndUpdate(
+            { email: email },
+            { $set: { password: hashedPassword } },
+            { new: true }
+        );
         if (!user) {
             return res.status(404).json({
                 error: 'User not found',
