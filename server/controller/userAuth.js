@@ -414,12 +414,11 @@ const verifyResetOTP = async (req, res) => {
         console.log('Stored Code:', user.verificationCode);
         console.log('Expiration Time:', user.verificationCodeExpiration);
 
-        if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
-            // Verification successful
-            user.verified = true;
-            user.verificationCode = null;
-            user.verificationCodeExpiration = null;
-
+        if (user.verificationCode === enteredCode) {
+            const expirationTime = new Date();
+            expirationTime.setMinutes(expirationTime.getMinutes() + 15); // Assuming a 15-minute expiration time
+            user.verificationCodeExpiration = expirationTime;
+            
             await user.save();
 
             return res.status(200).json({
