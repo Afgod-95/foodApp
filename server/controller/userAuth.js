@@ -439,8 +439,8 @@ const verifyResetOTP = async (req, res) => {
   //reset password 
   const resetPassword = async (req, res) => {
     try{
-        const { newPassword, confirmNewPassword } = req.body
-        if ( !newPassword || ! confirmNewPassword ){
+        const { email, newPassword, confirmNewPassword } = req.body
+        if ( !email || !newPassword || ! confirmNewPassword ){
             res.status(400).json({
                 error: 'All fields are required'
             })
@@ -459,7 +459,7 @@ const verifyResetOTP = async (req, res) => {
         }
 
         const user = await User.findOneAndUpdate(
-            { password: bcrypt.hash(confirmNewPassword, 12) },
+            { $setField: { password: bcrypt.hash(confirmNewPassword, 12) } },
             { new: true } 
         );
 
