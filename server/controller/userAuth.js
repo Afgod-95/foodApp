@@ -398,7 +398,7 @@ const verifyResetOTP = async (req, res) => {
 
         if (!enteredCode || !email) {
             return res.status(400).json({
-                error: 'Invalid OTP or email.',
+                error: 'This field is required.',
             });
         }
 
