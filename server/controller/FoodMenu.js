@@ -50,7 +50,7 @@ const restaurantMenu = {
 
     deleteFoodMenuById: async (req, res) => {
         try {
-            const { id } = req.body
+            const { id } = req.params
 
             const deletedMenu = await FoodMenu.findByIdAndDelete({ _id: objectId(id)})
 
