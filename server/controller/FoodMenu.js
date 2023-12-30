@@ -51,16 +51,17 @@ const restaurantMenu = {
     deleteFoodMenuById: async (req, res) => {
         try {
             const { id } = req.params
+            const { name } = req.body
 
             const deletedMenu = await FoodMenu.findByIdAndDelete({ _id: id })
 
             if (deletedMenu) {
                 return res.status(200).json({
-                    message: 'Food menu deleted successfully'
+                    message: `Food menu with ${name} deleted successfully`
                 })
             } else {
                 return res.status(404).json({
-                    error: 'Menu not found'
+                    error: `Food Menu with ${id} not found`
                 })
             }
         } catch (error) {
@@ -73,7 +74,8 @@ const restaurantMenu = {
 
     updateFoodMenuById: async (req, res) => {
         try {
-            const { id, name, image, description, rate } = req.body
+            const { id } = req.params
+            const { name, image, description, rate } = req.body
             const updatedMenu = await FoodMenu.findByIdAndUpdate( { _id: id }, {
                 name: name,
                 image: image,
@@ -83,7 +85,7 @@ const restaurantMenu = {
 
             if (updatedMenu) {
                 return res.status(200).json({
-                    message: "Menu updated successfully"
+                    message: `Menu with ${name} updated successfully`
                 })
             } else {
                 return res.status(404).json({
