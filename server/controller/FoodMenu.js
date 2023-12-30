@@ -1,6 +1,6 @@
-const { default: mongoose } = require('mongoose')
+
 const FoodMenu = require('../models/foodMenu.js')
-const objectId = mongoose.Types.ObjectId
+
 
 const restaurantMenu = {
     postMenu: async (req, res) => {
@@ -52,7 +52,7 @@ const restaurantMenu = {
         try {
             const { id } = req.params
 
-            const deletedMenu = await FoodMenu.findByIdAndDelete({ _id: objectId(id)})
+            const deletedMenu = await FoodMenu.findByIdAndDelete({ _id: id })
 
             if (deletedMenu) {
                 return res.status(200).json({
