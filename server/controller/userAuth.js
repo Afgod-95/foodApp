@@ -410,12 +410,13 @@ const verifyResetOTP = async (req, res) => {
             });
         }
 
-        console.log('Entered Code:', enteredCode);
-        console.log('Stored Code:', user.verificationCode);
-        console.log('Expiration Time:', user.verificationCodeExpiration);
-
+        
         if (user.verificationCode === enteredCode) {
             const currentTime = new Date().getTime();
+            console.log('Entered Code:', enteredCode);
+            console.log('Stored Code:', user.verificationCode);
+            console.log('Expiration Time:', user.verificationCodeExpiration);
+
             
             if (user.verificationCodeExpiration && currentTime < user.verificationCodeExpiration.getTime()) {
                 // Verification successful
