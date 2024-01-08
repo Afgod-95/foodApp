@@ -28,6 +28,7 @@ const {
     verifyResetOTP,
     getUserID,
     resetPassword,
+    getUsers,
 } = require('../controller/userAuth.js')
 
 const {
@@ -48,6 +49,7 @@ router.post('/profilePic', uploadProfilePic)
 router.post('/auth/register', registerUser)
 router.post('/auth/otpVerification', verifyCode )
 router.post('/auth/login', login)
+router.get('/auth/get-user', getUsers)
 router.get('/auth/get-user-by/:id', getUserID)
 
 //forgot password
