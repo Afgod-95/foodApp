@@ -290,53 +290,54 @@ const login = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        // Extract the token from the Authorization header
-        const token = req.header('Authorization').replace('Bearer ', '');
-    
-        if (!token) {
-          return res.status(401).json({
-            error: {
-              message: 'Authorization token is missing.',
-            },
-          });
+        // Check if the Authorization header is present
+        const authHeader = req.header('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({
+                error: {
+                    message: 'Authorization token is missing or invalid.',
+                },
+            });
         }
-    
+
+        // Extract the token from the Authorization header
+        const token = authHeader.replace('Bearer ', '');
+
         // Verify the token
-        const decoded = jwt.verify(token, process.env.SECRET_KEY); // Replace with your actual secret key
-    
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
+
         // Use the user ID from the decoded token to find the user
         const user = await User.findById(decoded.userId);
-    
+
         if (!user) {
-          return res.status(404).json({
-            error: {
-              message: 'User not found.',
-            },
-          });
+            return res.status(404).json({
+                error: {
+                    message: 'User not found.',
+                },
+            });
         }
-    
+
         // Return the user details
         res.status(200).json({
-          userId: user,
+            userId: user,
         });
-      } catch (error) {
+    } catch (error) {
         console.error(`Error: ${error.message}`);
         if (error.name === 'JsonWebTokenError') {
-          return res.status(401).json({
-            error: {
-              message: 'Invalid token.',
-            },
-          });
+            return res.status(401).json({
+                error: {
+                    message: 'Invalid token.',
+                },
+            });
         }
         res.status(500).json({
-          error: {
-            message: 'Internal Server Error.',
-          },
+            error: {
+                message: 'Internal Server Error.',
+            },
         });
     }
 };
-    
-    
+
 
 
 const getUserID = async (req, res) => {
