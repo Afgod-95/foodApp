@@ -178,10 +178,12 @@ const verifyCode = async (req, res) => {
     try {
         const { enteredCode, email } = req.body;
         console.log(enteredCode, email)
+       
+
 
         if (!enteredCode || !email) {
             return res.status(400).json({
-                error: 'Invalid OTP or email.',
+                error: 'All fields are required.',
             });
         }
 
@@ -216,6 +218,9 @@ const verifyCode = async (req, res) => {
                 error: 'Invalid OTP or email.',
             });
         }
+
+        console.log('Stored OTP Expiration:', user.verificationCodeExpiration);
+        console.log('Current Time:', new Date());
     } 
     catch (error) {
         console.error(`Error: ${error.message}`);
