@@ -200,6 +200,8 @@ const verifyCode = async (req, res) => {
             user.verified = true;
             user.verificationCode = null;
             user.verificationCodeExpiration = null;
+            console.log('Stored OTP Expiration:', user.verificationCodeExpiration);
+            console.log('Current Time:', new Date());
 
             // Save changes to the user
             await user.save();
@@ -219,8 +221,7 @@ const verifyCode = async (req, res) => {
             });
         }
 
-        console.log('Stored OTP Expiration:', user.verificationCodeExpiration);
-        console.log('Current Time:', new Date());
+        
     } 
     catch (error) {
         console.error(`Error: ${error.message}`);
