@@ -252,7 +252,6 @@ const login = async (req, res) => {
                 error: 'Invalid email',
             });
         }
-
         // Compare the provided password with the hashed password in the user object
         const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -278,7 +277,7 @@ const login = async (req, res) => {
         // Generate a token
         const token = generateUniqueToken(user._id)
 
-        res.status(200).json({ token });
+        res.status(200).json({ message: 'Login successful' });
     } catch (error) {
         console.error(`Error: ${error.message}`);
         res.status(500).json({
