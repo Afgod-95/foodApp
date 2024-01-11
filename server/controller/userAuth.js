@@ -276,8 +276,8 @@ const login = async (req, res) => {
         }
         // Generate a token
         const token = generateUniqueToken(user._id)
-
-        res.status(200).json({ message: 'Login successful' });
+        
+        res.status(200).json({message: 'Login successful', token });
     } catch (error) {
         console.error(`Error: ${error.message}`);
         res.status(500).json({
