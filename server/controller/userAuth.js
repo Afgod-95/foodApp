@@ -9,7 +9,8 @@ const storage = multer.memoryStorage()
 const upload = multer({storage: storage })
 const secretKey = process.env.SECRET_KEY
 
-const generateOTP = () => {
+
+const generateOTPData = () => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expirationTime = new Date().getTime() + 1800000;
     console.log("Generated OTP:", otp);
@@ -17,12 +18,15 @@ const generateOTP = () => {
     return { otp, expirationTime };
 };
 
-
-const generateResetOTP = () => {
+const generateResetOTPData = () => {
     const otp = Math.floor(Math.random() * 900000) + 100000;
-    const expirationTime = new Date().getTime() + 1800000; // 30 minutes in milliseconds
+    const expirationTime = new Date().getTime() + 1800000;
     return { otp, expirationTime };
-  };
+};
+
+// Usage:
+
+
   
 
 
@@ -151,7 +155,7 @@ const registerUser = async (req, res) => {
             password: await bcrypt.hash(password, 12),
         });
 
-        const verificationCodeData = generateOTP();
+        const verificationCodeData = generateOTPData();
         console.log(verificationCodeData)
         
         newUser.verificationCode = verificationCodeData.otp;
@@ -166,7 +170,6 @@ const registerUser = async (req, res) => {
 
         res.status(200).json({
             message: 'Email sent',
-            emailInfo,
         });
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -194,7 +197,6 @@ const verifyCode = async (req, res) => {
                 error: 'User not found',
             });
         }
-
         // Check if the entered OTP matches the stored OTP in the user object
         if (user.verificationCode === enteredCode && user.verificationCodeExpiration.getTime() > new Date().getTime()) {
             user.verified = true;
@@ -289,7 +291,7 @@ const login = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        // Check if the Authorization header is present
+        // Checking if the Authorization header is present
         const authHeader = req.header('Authorization');
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
@@ -299,13 +301,11 @@ const getUsers = async (req, res) => {
             });
         }
 
-        // Extract the token from the Authorization header
+        // Extracting the token from the Authorization header
         const token = authHeader.replace('Bearer ', '');
 
-        // Verify the token
+        // Verifying the token
         const decoded = jwt.verify(token, process.env.SECRET_KEY);
-
-        // Use the user ID from the decoded token to find the user
         const user = await User.findById(decoded.userId);
 
         if (!user) {
@@ -316,7 +316,7 @@ const getUsers = async (req, res) => {
             });
         }
 
-        // Return the user details
+        // Returning the user details
         res.status(200).json({
             userId: user,
         });
@@ -377,6 +377,8 @@ const sendResetPasswordEmail = async (email, otp) => {
         const verificationToken = generateUniqueToken();
         const verificationLink = `https://restaurantapi-bsc7.onrender.com/verify?token=${verificationToken}`;
 
+        const resetCodeData = generateResetOTPData();
+        const otp = resetCodeData.otp
         const mailOptions = {
             from: 'ShopNeest.com',
             to: email,
@@ -422,7 +424,7 @@ const ForgotPassword = async ( req, res ) => {
                 error: 'Email not found'
             })
         }
-        const verificationCodeData = generateResetOTP();
+        const verificationCodeData = generateResetOTPData();
         console.log(verificationCodeData)
         user.verificationCode = verificationCodeData.otp;
         user.verificationCodeExpiration = verificationCodeData.expirationTime;
